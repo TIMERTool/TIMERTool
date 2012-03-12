@@ -65,8 +65,7 @@ public class TimeManager {
         this.timePanelStartOffset = (Math.max(first.getThickness(), last.getThickness()) / 2) + getTimePanelSidePadding();
         this.timePanelEndOffset = (timePanelStartOffset * 2) + linkTimeToPixel(minTime + 1) * 2;
         
-        
-        System.out.println(((((double) totalTimePanelLength / (double) (maxTime - minTime)) * (double) timePanelScalingFactor)));
+        System.out.println(timeWindowVisibleStart + getTimeWindowEnd());
 
         updateWindow(windowStartTime);
     }
@@ -128,7 +127,7 @@ public class TimeManager {
 
         for (int theNode : top) {
             if (theNode == node) {
-                return upTo * (totalLinkPanelLength / top.size());
+                return (int) ((double) upTo * ((double) totalLinkPanelLength / (double) top.size()));
             }
 
             upTo++;
@@ -142,7 +141,7 @@ public class TimeManager {
 
         for (int theNode : bottom) {
             if (theNode == node) {
-                return upTo * (totalLinkPanelLength / bottom.size());
+                return (int) ((double) upTo * ((double) totalLinkPanelLength / (double) bottom.size()));
             }
 
             upTo++;
@@ -176,8 +175,14 @@ public class TimeManager {
             while (true) {
                 end = next;
 
+                System.out.print(linkTimeToPixel(next.getTime())+" <= " + (timeWindowVisibleStart + getTimeWindowEnd()));
+                
                 if (next == null || linkTimeToPixel(next.getTime()) <= timeWindowVisibleStart + getTimeWindowEnd()) {
+                    System.out.println(" yep " + next.getTime());
+                    
                     break;
+                } else {
+                    System.out.println();
                 }
 
                 next = next.getPrev();
