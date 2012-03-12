@@ -64,6 +64,9 @@ public class TimeManager {
         this.maxTime = end.getTime();
         this.timePanelStartOffset = (Math.max(first.getThickness(), last.getThickness()) / 2) + getTimePanelSidePadding();
         this.timePanelEndOffset = (timePanelStartOffset * 2) + linkTimeToPixel(minTime + 1) * 2;
+        
+        
+        System.out.println(((((double) totalTimePanelLength / (double) (maxTime - minTime)) * (double) timePanelScalingFactor)));
 
         updateWindow(windowStartTime);
     }
@@ -93,7 +96,7 @@ public class TimeManager {
     }
 
     public int getTimePanelTotalLength() {
-        return totalTimePanelLength * 6 + timePanelEndOffset;
+        return totalTimePanelLength + timePanelEndOffset;
     }
 
     public int getTimePanelSidePadding() {
@@ -117,7 +120,7 @@ public class TimeManager {
     }
 
     public int linkTimeToPixel(int time) {
-        return ((time - minTime) * (totalTimePanelLength / timeLinks * timePanelScalingFactor)) + (timePanelStartOffset * timePanelScalingFactor);
+        return ((int) (((double) (time - minTime)) * (((double) totalTimePanelLength / (double) (maxTime - minTime)) * (double) timePanelScalingFactor))) + (timePanelStartOffset * timePanelScalingFactor);
     }
 
     public int topNodeToPixel(int node) {

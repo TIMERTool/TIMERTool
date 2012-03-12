@@ -11,7 +11,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
 
 public class Main extends JFrame {
 
-    public static final int INITALTIMEPANELLENGTH = 500;
+    public static final int INITALTIMEPANELLENGTH = 1000000;
     public static final int INITALLINKPANELLENGTH = 1000;
     public static final int INITALWINDOWTIME = 0;
     public static final int WINDOWLENGTH = 990;
