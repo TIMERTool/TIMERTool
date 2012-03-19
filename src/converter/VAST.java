@@ -26,6 +26,10 @@ public class VAST {
             String[] split = in.split(",");            
             split[2] = split[2].replaceAll("2006", "").replaceAll("\\s", "");
             
+            if(split[2].length() == 2) {
+                split[2] += "0000";
+            }
+            
             for(int i = 0; i < split.length; i++) {
                 ps.print(split[i] + ",");
             }

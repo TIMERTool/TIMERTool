@@ -20,6 +20,7 @@ public class TimeManager {
 
     private TimeLink first, last, start, end;
     private int timePanelStartOffset, timePanelEndOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, totalLinkPanelLength, minTime, maxTime, timePanelScalingFactor = 1, timeLinks;
+    private static final Color[] colours = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.BLACK, Color.WHITE, Color.LIGHT_GRAY};
     private ArrayList<Integer> top = new ArrayList<>();
     private ArrayList<Integer> bottom = new ArrayList<>();
 
@@ -35,7 +36,7 @@ public class TimeManager {
             //TODO Calculate line thickness
             //TODO Calculate line colour
 
-            end = new TimeLink(end, null, Integer.parseInt(values[0]), Integer.parseInt(values[2]), Integer.parseInt(values[1]), 1, Color.RED);
+            end = new TimeLink(end, null, Integer.parseInt(values[0]), Integer.parseInt(values[2]), Integer.parseInt(values[1]), 1, colours[top.size() % colours.length]);
 
             top.add(end.getTopNode());
             bottom.add(end.getBottomNode());
@@ -64,7 +65,7 @@ public class TimeManager {
         this.maxTime = end.getTime();
         this.timePanelStartOffset = (Math.max(first.getThickness(), last.getThickness()) / 2) + getTimePanelSidePadding();
         this.timePanelEndOffset = (timePanelStartOffset * 2) + linkTimeToPixel(minTime + 1) * 2;
-        
+
         System.out.println(timeWindowVisibleStart + getTimeWindowEnd());
 
         updateWindow(windowStartTime);
@@ -175,19 +176,21 @@ public class TimeManager {
             while (true) {
                 end = next;
 
-                System.out.print(linkTimeToPixel(next.getTime())+" <= " + (timeWindowVisibleStart + getTimeWindowEnd()));
+                //TODO go here
                 
+                //System.out.print(next.getTime() + " <= " + (timeWindowVisibleStart + getTimeWindowEnd()));
+
                 if (next == null || linkTimeToPixel(next.getTime()) <= timeWindowVisibleStart + getTimeWindowEnd()) {
-                    System.out.println(" yep " + next.getTime());
-                    
+                    //System.out.println(" yep " + next.getTime());
+
                     break;
                 } else {
-                    System.out.println();
+                    //System.out.println();
                 }
 
                 next = next.getPrev();
             }
-        } else if (offset > 0) {    
+        } else if (offset > 0) {
             while (true) {
                 start = next;
 
@@ -209,10 +212,10 @@ public class TimeManager {
                 next = next.getNext();
             }
         } else if (offset < 0) {
-            if(start == null || end == null) {
+            if (start == null || end == null) {
                 start = end = last;
             }
-            
+
             while (true) {
                 if (next == null || linkTimeToPixel(next.getTime()) < timeWindowVisibleStart + getTimeWindowStart()) {
                     break;
@@ -226,17 +229,17 @@ public class TimeManager {
 
             while (true) {
                 end = next;
-                
+
                 if (next == null || linkTimeToPixel(next.getTime()) <= timeWindowVisibleStart + getTimeWindowEnd()) {
                     break;
                 }
-                
+
                 next = next.getPrev();
             }
         }
 
-   
-       // System.out.println(start.getTime() + " " + end.getTime());
-              //System.out.println(linkTimeToPixel(start.getTime()) + " " + linkTimeToPixel(end.getTime()));
+
+        // System.out.println(start.getTime() + " " + end.getTime());
+        //System.out.println(linkTimeToPixel(start.getTime()) + " " + linkTimeToPixel(end.getTime()));
     }
 }

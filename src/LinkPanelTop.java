@@ -23,7 +23,7 @@ public class LinkPanelTop extends ScrollPanel {
 
             if (pixel != -1) {
                 g2.setColor(upTo.getColour());
-                g2.drawLine(pixel, 0, manager.linkTimeToPixel(upTo.getTime()) + (getVisibleStart() - manager.getTimePanelVisibleStart()), 99);
+                g2.drawLine(pixel, 0, manager.linkTimeToPixel(upTo.getTime()) + (getVisibleStart() - manager.getTimePanelVisibleStart()), 174);
             }
         }
     }
