@@ -150,7 +150,7 @@ public class TimeManager {
         return -1;
     }
 
-    int bottomNodeToPixel(int node) {
+    public int bottomNodeToPixel(int node) {
         int upTo = 0;
 
         for (int theNode : bottom) {

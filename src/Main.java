@@ -2,12 +2,11 @@
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class Main extends JFrame {
 
@@ -26,10 +25,9 @@ public class Main extends JFrame {
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             setSize(1000, 1500);
 
-            JLayeredPane jp = new JLayeredPane();
-            add(jp);
+            JLayeredPane jp = new JLayeredPane();            
 
-            TimeManager manager = new TimeManager(new File("input.csv"), INITALTIMEPANELLENGTH, INITALLINKPANELLENGTH, INITALWINDOWTIME, WINDOWLENGTH, DURATIONSCLAINGFACTOR);
+            final TimeManager manager = new TimeManager(new File("input.csv"), INITALTIMEPANELLENGTH, INITALLINKPANELLENGTH, INITALWINDOWTIME, WINDOWLENGTH, DURATIONSCLAINGFACTOR);
 
             LinkPanelTop linkPanelTop = new LinkPanelTop(manager);
             linkPanelTop.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 300));
@@ -37,9 +35,23 @@ public class Main extends JFrame {
             LinkPanelBottom linkPanelBottom = new LinkPanelBottom(manager);
             linkPanelBottom.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 300));
 
-            TimePanel timePanel = new TimePanel(manager, linkPanelTop, linkPanelBottom);
+            final TimePanel timePanel = new TimePanel(manager, linkPanelTop, linkPanelBottom);
             timePanel.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 100));
 
+            final JSlider durationScalingFactorBar = new JSlider();
+            durationScalingFactorBar.setMinimum(1);
+            durationScalingFactorBar.setMaximum(100);
+            durationScalingFactorBar.addChangeListener(new ChangeListener() {
+
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    manager.setDurationScalingFactor(durationScalingFactorBar.getValue());
+                    timePanel.repaint();
+                }
+                
+            });
+            durationScalingFactorBar.setBounds(5, 700, 200, 50);
+            
             JScrollPane linksTop = new JScrollPane(linkPanelTop);
             linksTop.setBounds(300, 500, 1000, 250);
             linksTop.setBorder(BorderFactory.createEmptyBorder());
@@ -66,6 +78,9 @@ public class Main extends JFrame {
             jp.add(linksBottom, new Integer(0));
             jp.add(times, new Integer(1));
             jp.add(tp, new Integer(2));
+            jp.add(durationScalingFactorBar, new Integer(3));
+            
+            add(jp);
         } catch (IOException io) {
         }
     }
