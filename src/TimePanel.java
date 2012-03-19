@@ -36,15 +36,17 @@ public class TimePanel extends ScrollPanel {
         while (it.hasNext()) {
             TimeLink upTo = it.next();
             int pixel = manager.linkTimeToPixel(upTo.getTime());
+            int thickness = upTo.getDuration() / manager.getDurationScalingFactor();
 
             g2.setColor(upTo.getColour());
-            g2.draw(new Line2D.Double(pixel, 0, pixel - (((double)upTo.getThickness()) / 2f) - 1, 19));
-            g2.draw(new Line2D.Double(pixel, 0, pixel + (((double)upTo.getThickness()) / 2f) + 1, 19));
+        
+            g2.draw(new Line2D.Double(pixel, 0, pixel - (((double)thickness) / 2f) + 1, 19));
+            g2.draw(new Line2D.Double(pixel, 0, pixel + (((double)thickness) / 2f), 19));
             
-            g2.fillRect((pixel - (upTo.getThickness() / 2)) - (upTo.getThickness() % 2 == 0 ? 1 : 2), 20, upTo.getThickness() + 3, 60);
+            g2.fillRect((pixel - (thickness / 2)) - (thickness % 2 == 0 ? 1 : 2) + 2, 20, thickness, 60);
             
-            g2.draw(new Line2D.Double(pixel - (((double)upTo.getThickness() / 2f)) - 1, 80, pixel, 100));
-            g2.draw(new Line2D.Double(pixel + (((double)upTo.getThickness() / 2f)) + 1, 80, pixel, 100));
+            g2.draw(new Line2D.Double(pixel - (((double)thickness / 2f)) + 1, 80, pixel, 100));
+            g2.draw(new Line2D.Double(pixel + (((double)thickness / 2f)), 80, pixel, 100));
         }
         
         linkPanelTop.repaint();

@@ -17,7 +17,7 @@ public class TimeLink {
     private int topNode;
     private int time;
     private int bottomNode;
-    private int thickness;
+    private int duration;
     private Color colour;
 
     public TimeLink(TimeLink prev, TimeLink next, int topNode, int time, int bottomNode, int thickness, Color colour) {
@@ -26,7 +26,7 @@ public class TimeLink {
         this.topNode = topNode;
         this.time = time;
         this.bottomNode = bottomNode;
-        this.thickness = thickness;
+        this.duration = thickness;
         this.colour = colour;
     }
 
@@ -66,10 +66,10 @@ public class TimeLink {
     }
     
     /**
-     * @return the thickness
+     * @return the duration
      */
-    public int getThickness() {
-        return thickness;
+    public int getDuration() {
+        return duration;
     }
 
     /**
@@ -115,10 +115,10 @@ public class TimeLink {
     }
 
     /**
-     * @param thickness the thickness to set
+     * @param duration the duration to set
      */
-    public void setThickness(int thickness) {
-        this.thickness = thickness;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     /**

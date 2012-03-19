@@ -11,10 +11,11 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
 
 public class Main extends JFrame {
 
-    public static final int INITALTIMEPANELLENGTH = 1000000;
+    public static final int INITALTIMEPANELLENGTH = 100000;
     public static final int INITALLINKPANELLENGTH = 2500;
     public static final int INITALWINDOWTIME = 0;
     public static final int WINDOWLENGTH = 990;
+    public static final int DURATIONSCLAINGFACTOR = 250;
 
     public static void main(String[] args) {
         new Main().setVisible(true);
@@ -28,7 +29,7 @@ public class Main extends JFrame {
             JLayeredPane jp = new JLayeredPane();
             add(jp);
 
-            TimeManager manager = new TimeManager(new File("input.csv"), INITALTIMEPANELLENGTH, INITALLINKPANELLENGTH, INITALWINDOWTIME, WINDOWLENGTH);
+            TimeManager manager = new TimeManager(new File("input.csv"), INITALTIMEPANELLENGTH, INITALLINKPANELLENGTH, INITALWINDOWTIME, WINDOWLENGTH, DURATIONSCLAINGFACTOR);
 
             LinkPanelTop linkPanelTop = new LinkPanelTop(manager);
             linkPanelTop.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 300));

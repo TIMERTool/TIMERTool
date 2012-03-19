@@ -19,12 +19,13 @@ import java.util.Collections;
 public class TimeManager {
 
     private TimeLink first, last, start, end;
-    private int timePanelStartOffset, timePanelEndOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, totalLinkPanelLength, minTime, maxTime, timePanelScalingFactor = 1, timeLinks;
+    private int timePanelStartOffset, timePanelEndOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, totalLinkPanelLength, minTime, maxTime, timePanelScalingFactor = 1, timeLinks, durationScalingFactor;
+    private boolean colourByTo = false;
     private static final Color[] colours = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.BLACK, Color.WHITE, Color.LIGHT_GRAY};
     private ArrayList<Integer> top = new ArrayList<>();
     private ArrayList<Integer> bottom = new ArrayList<>();
 
-    public TimeManager(File inputFile, int preferredTotalTimePanelLength, int preferredTotalLinkPanelLength, int windowStartTime, int windowLength) throws IOException {
+    public TimeManager(File inputFile, int preferredTotalTimePanelLength, int preferredTotalLinkPanelLength, int windowStartTime, int windowLength, int initalDurationScalingFactor) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(inputFile));
 
         br.readLine();
@@ -34,9 +35,16 @@ public class TimeManager {
             String[] values = line.split(",");
 
             //TODO Calculate line thickness
-            //TODO Calculate line colour
+            
+            int colourIndex;
+            
+            if(colourByTo) {
+                colourIndex = Integer.parseInt(values[1]) % colours.length;
+            } else {
+                colourIndex = Integer.parseInt(values[0]) % colours.length;
+            }
 
-            end = new TimeLink(end, null, Integer.parseInt(values[0]), Integer.parseInt(values[2]), Integer.parseInt(values[1]), 1, colours[top.size() % colours.length]);
+            end = new TimeLink(end, null, Integer.parseInt(values[0]), Integer.parseInt(values[2]), Integer.parseInt(values[1]), (Integer.parseInt(values[3])) + 1, colours[colourIndex]);
 
             top.add(end.getTopNode());
             bottom.add(end.getBottomNode());
@@ -63,8 +71,9 @@ public class TimeManager {
         this.last = end;
         this.minTime = start.getTime();
         this.maxTime = end.getTime();
-        this.timePanelStartOffset = (Math.max(first.getThickness(), last.getThickness()) / 2) + getTimePanelSidePadding();
+        this.timePanelStartOffset = (Math.max(first.getDuration(), last.getDuration()) / 2) + getTimePanelSidePadding();
         this.timePanelEndOffset = (timePanelStartOffset * 2) + linkTimeToPixel(minTime + 1) * 2;
+        this.durationScalingFactor = initalDurationScalingFactor;
 
         System.out.println(timeWindowVisibleStart + getTimeWindowEnd());
 
@@ -118,6 +127,10 @@ public class TimeManager {
     public final int getTimeWindowEnd() {
         return timeWindowLength - getTimeWindowStart();
     }
+    
+    public int getDurationScalingFactor() {
+        return durationScalingFactor;
+    }
 
     public int linkTimeToPixel(int time) {
         return ((int) (((double) (time - minTime)) * (((double) totalTimePanelLength / (double) (maxTime - minTime)) * (double) timePanelScalingFactor))) + (timePanelStartOffset * timePanelScalingFactor);
@@ -153,6 +166,10 @@ public class TimeManager {
 
     public void setScalingFactor(int scalingFactor) {
         this.timePanelScalingFactor = scalingFactor;
+    }
+    
+    public void setDurationScalingFactor(int durationScalingFactor) {
+        this.durationScalingFactor = durationScalingFactor;
     }
 
     public final void updateWindow(int offset) {

@@ -16,8 +16,8 @@ public class VAST {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(new File("input.csv")));
-        PrintStream ps = new PrintStream(new File("output.csv"));
+        BufferedReader br = new BufferedReader(new FileReader(new File("source.csv")));
+        PrintStream ps = new PrintStream(new File("input.csv"));
         
         br.readLine();
         
@@ -26,11 +26,11 @@ public class VAST {
             String[] split = in.split(",");            
             split[2] = split[2].replaceAll("2006", "").replaceAll("\\s", "");
             
-            if(split[2].length() == 2) {
+            if(split[2].length() == 4) {
                 split[2] += "0000";
             }
             
-            for(int i = 0; i < split.length; i++) {
+            for(int i = 0; i < 4; i++) {
                 ps.print(split[i] + ",");
             }
             
