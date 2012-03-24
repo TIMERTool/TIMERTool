@@ -7,20 +7,21 @@ import javax.swing.JViewport;
 import javax.swing.event.MouseInputAdapter;
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in
+ * the editor.
  */
-
 /**
  *
  * @author Peter Hoek
  */
 public class ScrollPanel extends JPanel {
+
     private int xDiff;
     private int visibleStart;
-    
+
     public ScrollPanel() {
         MouseInputAdapter mia = new MouseInputAdapter() {
+
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (getParent() instanceof JViewport) {
@@ -28,23 +29,23 @@ public class ScrollPanel extends JPanel {
                     Point p = jv.getViewPosition();
                     int oldVisibleStart = visibleStart;
                     visibleStart = p.x - (e.getX() - xDiff);
-                    
+
                     int maxX = getWidth() - jv.getWidth();
-                    
+
                     if (visibleStart < 0) {
-                        visibleStart = 0;       
-                        
-                        xDiff = e.getX(); 
+                        visibleStart = 0;
+
+                        xDiff = e.getX();
                     } else if (visibleStart > maxX) {
                         visibleStart = maxX;
-                        
-                        xDiff = e.getX(); 
+
+                        xDiff = e.getX();
                     }
-                    
+
                     didScroll(visibleStart - oldVisibleStart);
 
                     repaint();
-                    
+
                     jv.setViewPosition(new Point(visibleStart, 0));
                 }
             }
@@ -60,14 +61,28 @@ public class ScrollPanel extends JPanel {
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         };
-        
+
         addMouseMotionListener(mia);
         addMouseListener(mia);
     }
-    
-    protected void didScroll(int amount) {        
+
+    public void scrollBy(int amount) {
+        if (getParent() instanceof JViewport) {
+            JViewport jv = (JViewport) getParent();
+
+            didScroll(amount);
+
+            repaint();
+
+            visibleStart += amount;
+            
+            jv.setViewPosition(new Point(visibleStart, 0));
+        }
     }
-    
+
+    protected void didScroll(int amount) {
+    }
+
     public int getVisibleStart() {
         return visibleStart;
     }

@@ -36,7 +36,12 @@ public class TimePanel extends ScrollPanel {
         while (it.hasNext()) {
             TimeLink upTo = it.next();
             int pixel = manager.linkTimeToPixel(upTo.getTime());
-            int thickness = upTo.getDuration() / manager.getDurationScalingFactor();
+            
+            int thickness = manager.getDurationScalingFactor() > 0 ? upTo.getDuration() / manager.getDurationScalingFactor() : 1;
+            
+            if(thickness < 1) {
+                thickness = 1;
+            }
 
             g2.setColor(upTo.getColour());
         
