@@ -45,7 +45,7 @@ public class ScrollPanel extends JPanel {
                     didScroll(visibleStart - oldVisibleStart);
 
                     repaint();
-
+                    
                     jv.setViewPosition(new Point(visibleStart, 0));
                 }
             }

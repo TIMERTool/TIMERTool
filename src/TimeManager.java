@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -18,15 +19,15 @@ import java.util.Collections;
 public class TimeManager {
 
     private TimeLink first, last, start, end;
-    private int timePanelSideOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, totalLinkPanelLength, minTime, maxTime, timePanelScalingFactor = 1, timeLinks, durationScalingFactor = 0;
+    private int timePanelSideOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, totalTopLinkPanelLength, totalBottomLinkPanelLength, minTime, maxTime, timePanelScalingFactor = 1, timeLinks, durationScalingFactor = 0;
     private boolean colourByTo = false;
     private static final Color[] colours = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.BLACK, Color.WHITE, Color.LIGHT_GRAY};
     private ArrayList<Integer> top = new ArrayList<>();
     private ArrayList<Integer> bottom = new ArrayList<>();
+    private HashMap<Integer, String> labels = new HashMap<>();
 
-    public TimeManager(File inputFile, int preferredTotalLinkPanelLength, int windowLength) throws IOException {
+    public TimeManager(File inputFile, int windowLength) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(inputFile));
-
         br.readLine();
 
         String line;
@@ -43,8 +44,13 @@ public class TimeManager {
 
             end = new TimeLink(end, null, Integer.parseInt(values[0]), Integer.parseInt(values[2]), Integer.parseInt(values[1]), (Integer.parseInt(values[3])) + 1, colours[colourIndex]);
 
-            top.add(end.getTopNode());
-            bottom.add(end.getBottomNode());
+            if (!top.contains(end.getTopNode())) {
+                top.add(end.getTopNode());
+            }
+            
+            if (!top.contains(end.getBottomNode())) {
+                bottom.add(end.getBottomNode());
+            }
 
             if (end.getPrev() == null) {
                 start = end;
@@ -63,7 +69,8 @@ public class TimeManager {
         this.timeWindowLength = windowLength;
         this.timeWindowVisibleStart = 0;
         this.totalTimePanelLength = windowLength - (getTimePanelSidePadding() * 2);
-        this.totalLinkPanelLength = preferredTotalLinkPanelLength;
+        this.totalTopLinkPanelLength = top.size() * 10;
+        this.totalBottomLinkPanelLength = bottom.size() * 10;
         this.first = start;
         this.last = end;
         this.minTime = start.getTime();
@@ -104,8 +111,12 @@ public class TimeManager {
         return ((int) (getTimeWindowStart() * 1.25f));
     }
 
-    public int getLinkPanelTotalLength() {
-        return totalLinkPanelLength;
+    public int getTopLinkPanelTotalLength() {
+        return totalTopLinkPanelLength;
+    }
+
+    public int getBottomLinkPanelTotalLength() {
+        return totalBottomLinkPanelLength;
     }
 
     public int getTimeWindowLength() {
@@ -124,9 +135,11 @@ public class TimeManager {
         return durationScalingFactor;
     }
 
-    public int linkTimeToPixel(int time) {
-        //System.out.println(timePanelSideOffset);
+    public String getNodeName(int node) {
+        return new Integer(node).toString();
+    }
 
+    public int linkTimeToPixel(int time) {
         return ((int) (((double) (time - minTime)) * (((double) totalTimePanelLength / (double) (maxTime - minTime)) * (double) timePanelScalingFactor))) + timePanelSideOffset;
     }
 
@@ -135,7 +148,7 @@ public class TimeManager {
 
         for (int theNode : top) {
             if (theNode == node) {
-                return (int) ((double) upTo * ((double) totalLinkPanelLength / (double) top.size()));
+                return ((int) ((double) upTo * (((double) totalTopLinkPanelLength / (double) top.size()) + 1))) + 5;
             }
 
             upTo++;
@@ -149,7 +162,7 @@ public class TimeManager {
 
         for (int theNode : bottom) {
             if (theNode == node) {
-                return (int) ((double) upTo * ((double) totalLinkPanelLength / (double) bottom.size()));
+                return ((int) ((double) upTo * (((double) totalBottomLinkPanelLength / (double) bottom.size()) + 1))) + 5;
             }
 
             upTo++;

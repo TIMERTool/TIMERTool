@@ -1,6 +1,8 @@
 
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 public class LinkPanelTop extends ScrollPanel {
 
@@ -23,7 +25,17 @@ public class LinkPanelTop extends ScrollPanel {
 
             if (pixel != -1) {
                 g2.setColor(upTo.getColour());
-                g2.drawLine(pixel, 0, manager.linkTimeToPixel(upTo.getTime()) + (getVisibleStart() - manager.getTimePanelVisibleStart()), 174);
+                
+                AffineTransform fontAT = new AffineTransform();
+                Font theFont = g2.getFont();
+
+                fontAT.rotate(-(Math.PI / 2));
+                Font theDerivedFont = theFont.deriveFont(fontAT);
+
+                g2.setFont(theDerivedFont);
+                g2.drawString(manager.getNodeName(upTo.getTopNode()), pixel + 4, 75);
+                g2.setFont(theFont);                
+                g2.drawLine(pixel, 75, manager.linkTimeToPixel(upTo.getTime()) + (getVisibleStart() - manager.getTimePanelVisibleStart()), 249);
             }
         }
     }

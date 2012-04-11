@@ -29,7 +29,7 @@ public class TimePanel extends ScrollPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D) g;        
 
         TimeLinkIterator it = manager.getAllTimeLinksIterator();
 
@@ -49,7 +49,7 @@ public class TimePanel extends ScrollPanel {
             g2.draw(new Line2D.Double(pixel, 0, pixel + (((double)thickness) / 2f), 19));
             
             g2.fillRect((pixel - (thickness / 2)) - (thickness % 2 == 0 ? 1 : 2) + 2, 20, thickness, 60);
-            
+                 
             g2.draw(new Line2D.Double(pixel - (((double)thickness / 2f)) + 1, 80, pixel, 100));
             g2.draw(new Line2D.Double(pixel + (((double)thickness / 2f)), 80, pixel, 100));
         }
