@@ -1,3 +1,4 @@
+package com.timer.model;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -22,8 +24,10 @@ public class TimeManager {
     private int timePanelSideOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, totalTopLinkPanelLength, totalBottomLinkPanelLength, minTime, maxTime, timePanelScalingFactor = 1, timeLinks, durationScalingFactor = 0;
     private boolean colourByTo = false;
     private static final Color[] colours = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.BLACK, Color.WHITE, Color.LIGHT_GRAY};
-    private ArrayList<Integer> top = new ArrayList<>();
-    private ArrayList<Integer> bottom = new ArrayList<>();
+    private ArrayList<Integer> nodes = new ArrayList<>();
+    private ArrayList<Integer> topNodes = new ArrayList<>();
+    private ArrayList<Integer> bottomNodes = new ArrayList<>();
+    private ArrayList<Integer> hiddenNodes = new ArrayList<>(); //TODO hide nodes (make and call hidng methods hide/is hidden/unhide
     private HashMap<Integer, String> labels = new HashMap<>();
 
     public TimeManager(File inputFile, int windowLength) throws IOException {
@@ -44,12 +48,20 @@ public class TimeManager {
 
             end = new TimeLink(end, null, Integer.parseInt(values[0]), Integer.parseInt(values[2]), Integer.parseInt(values[1]), (Integer.parseInt(values[3])) + 1, colours[colourIndex]);
 
-            if (!top.contains(end.getTopNode())) {
-                top.add(end.getTopNode());
+            if (!nodes.contains(end.getTopNode())) {
+                nodes.add(end.getTopNode());
             }
-            
-            if (!top.contains(end.getBottomNode())) {
-                bottom.add(end.getBottomNode());
+
+            if (!nodes.contains(end.getBottomNode())) {
+                nodes.add(end.getBottomNode());
+            }
+
+            if (!topNodes.contains(end.getTopNode())) {
+                topNodes.add(end.getTopNode());
+            }
+
+            if (!bottomNodes.contains(end.getBottomNode())) {
+                bottomNodes.add(end.getBottomNode());
             }
 
             if (end.getPrev() == null) {
@@ -61,16 +73,16 @@ public class TimeManager {
             timeLinks++;
         }
 
-        Collections.sort(top);
-        Collections.sort(bottom);
+        Collections.sort(topNodes);
+        Collections.sort(bottomNodes);
 
         end.setNext(null);
 
         this.timeWindowLength = windowLength;
         this.timeWindowVisibleStart = 0;
         this.totalTimePanelLength = windowLength - (getTimePanelSidePadding() * 2);
-        this.totalTopLinkPanelLength = top.size() * 10;
-        this.totalBottomLinkPanelLength = bottom.size() * 10;
+        this.totalTopLinkPanelLength = topNodes.size() * 10;
+        this.totalBottomLinkPanelLength = bottomNodes.size() * 10;
         this.first = start;
         this.last = end;
         this.minTime = start.getTime();
@@ -79,12 +91,48 @@ public class TimeManager {
         setUpWindow();
     }
 
-    public TimeLinkIterator getAllTimeLinksIterator() {
-        return new TimeLinkIterator(first, last);
+    public Iterator<TimeLink> makeIterator(TimeLink start, TimeLink end, TimeRule rule) {
+        ArrayList<TimeLink> list = new ArrayList<>();
+
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Null start or end timelink node.");
+        }
+
+        while (start != end.getNext()) {
+            if (rule.evaluate(start)) {
+                list.add(start);
+            }
+
+            start = start.getNext();
+        }
+
+        list.add(end);
+
+        return list.iterator();
     }
 
-    public TimeLinkIterator getVisibleTimeLinksIterator() {
-        return new TimeLinkIterator(start, end);
+    public Iterator<TimeLink> getAllTimeLinksIterator() {
+        return makeIterator(first, last, new TimeRule() {
+
+            @Override
+            public boolean evaluate(TimeLink link) {
+                return true;
+            }
+        });
+    }
+
+    public Iterator<TimeLink> getVisibleTimeLinksIterator() {
+        return makeIterator(start, end, new TimeRule() {
+
+            @Override
+            public boolean evaluate(TimeLink link) {
+                if (hiddenNodes.contains(link.getTopNode()) || hiddenNodes.contains(link.getTopNode())) {
+                    return false;
+                }
+
+                return true;
+            }
+        });
     }
 
     public int getMinTime() {
@@ -139,36 +187,32 @@ public class TimeManager {
         return new Integer(node).toString();
     }
 
+    public ArrayList<Integer> getNodeList() {
+        return nodes;
+    }
+
     public int linkTimeToPixel(int time) {
         return ((int) (((double) (time - minTime)) * (((double) totalTimePanelLength / (double) (maxTime - minTime)) * (double) timePanelScalingFactor))) + timePanelSideOffset;
     }
 
     public int topNodeToPixel(int node) {
-        int upTo = 0;
+        int index = topNodes.indexOf(node);
 
-        for (int theNode : top) {
-            if (theNode == node) {
-                return ((int) ((double) upTo * (((double) totalTopLinkPanelLength / (double) top.size()) + 1))) + 5;
-            }
-
-            upTo++;
+        if (index == -1) {
+            throw new IllegalArgumentException("Invalid Node.");
         }
 
-        return -1;
+        return ((int) ((double) index * (((double) totalBottomLinkPanelLength / (double) topNodes.size()) + 1))) + 5;
     }
 
     public int bottomNodeToPixel(int node) {
-        int upTo = 0;
+        int index = bottomNodes.indexOf(node);
 
-        for (int theNode : bottom) {
-            if (theNode == node) {
-                return ((int) ((double) upTo * (((double) totalBottomLinkPanelLength / (double) bottom.size()) + 1))) + 5;
-            }
-
-            upTo++;
+        if (index == -1) {
+            throw new IllegalArgumentException("Invalid Node.");
         }
 
-        return -1;
+        return ((int) ((double) index * (((double) totalBottomLinkPanelLength / (double) bottomNodes.size()) + 1))) + 5;
     }
 
     public void setTimePanelScalingFactor(int timePanelScalingFactor) {
@@ -177,6 +221,18 @@ public class TimeManager {
 
     public void setDurationScalingFactor(int durationScalingFactor) {
         this.durationScalingFactor = durationScalingFactor;
+    }
+
+    public void setNodeVisibility(int i, boolean visible) {
+        if (visible) {
+            if (hiddenNodes.contains(i)) {
+                hiddenNodes.remove(i);
+            }
+        } else {
+            if (!hiddenNodes.contains(i)) {
+                hiddenNodes.add(i);
+            }
+        }
     }
 
     public final void updateWindow(int offset) {

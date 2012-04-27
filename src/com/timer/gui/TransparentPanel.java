@@ -1,4 +1,7 @@
+package com.timer.gui;
 
+
+import com.timer.model.TimeManager;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JPanel;

@@ -1,8 +1,15 @@
+package com.timer.gui;
 
-import java.awt.Color;
+
+import com.timer.model.TimeLink;
+import com.timer.model.TimeManager;
+import com.timer.gui.ScrollPanel;
+import com.timer.gui.LinkPanelBottom;
+import com.timer.gui.LinkPanelTop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
+import java.util.Iterator;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -31,7 +38,7 @@ public class TimePanel extends ScrollPanel {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;        
 
-        TimeLinkIterator it = manager.getAllTimeLinksIterator();
+        Iterator<TimeLink> it = manager.getAllTimeLinksIterator();
 
         while (it.hasNext()) {
             TimeLink upTo = it.next();

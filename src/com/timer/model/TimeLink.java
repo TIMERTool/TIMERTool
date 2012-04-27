@@ -1,3 +1,5 @@
+package com.timer.model;
+
 
 import java.awt.Color;
 

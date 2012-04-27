@@ -1,6 +1,13 @@
+package com.timer.gui;
 
+
+import com.timer.model.TimeLink;
+import com.timer.model.TimeManager;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.util.Iterator;
 
 public class LinkPanelBottom extends ScrollPanel {
 
@@ -15,7 +22,7 @@ public class LinkPanelBottom extends ScrollPanel {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        TimeLinkIterator it = manager.getVisibleTimeLinksIterator();
+        Iterator<TimeLink> it = manager.getVisibleTimeLinksIterator();
 
         while (it.hasNext()) {
             TimeLink upTo = it.next();
@@ -23,6 +30,16 @@ public class LinkPanelBottom extends ScrollPanel {
 
             if (pixel != -1) {
                 g2.setColor(upTo.getColour());
+                
+                AffineTransform fontAT = new AffineTransform();
+                Font theFont = g2.getFont();
+
+                fontAT.rotate(Math.PI / 2);
+                Font theDerivedFont = theFont.deriveFont(fontAT);
+
+                g2.setFont(theDerivedFont);
+                g2.drawString(manager.getNodeName(upTo.getBottomNode()), pixel - 4, 176);
+                g2.setFont(theFont);                
                 g2.drawLine(pixel, 174, manager.linkTimeToPixel(upTo.getTime()) + (getVisibleStart() - manager.getTimePanelVisibleStart()), 0);
             }
         }
