@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.swing.JOptionPane;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -102,7 +103,9 @@ public class TimeManager {
         ArrayList<TimeLink> list = new ArrayList<>();
 
         if (start == null || end == null) {
-            throw new IllegalArgumentException("Null start or end timelink node.");
+            System.out.println("Null start or end timelink node.\n\nStart:"+start+"\nEnd:"+end.toString());
+            
+            System.exit(1);
         }
 
         while (start != end.getNext()) {

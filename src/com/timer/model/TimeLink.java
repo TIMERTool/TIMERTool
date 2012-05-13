@@ -31,6 +31,11 @@ public class TimeLink {
         this.duration = thickness;
         this.colour = colour;
     }
+    
+    @Override
+    public String toString() {
+        return "TopNode:"+topNode+" BottomNode:"+bottomNode+" Time:"+time;
+    }
 
     /**
      * @return the next
