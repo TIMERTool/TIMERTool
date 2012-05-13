@@ -27,7 +27,7 @@ public class TimeManager {
     private ArrayList<Integer> nodes = new ArrayList<>();
     private ArrayList<Integer> topNodes = new ArrayList<>();
     private ArrayList<Integer> bottomNodes = new ArrayList<>();
-    private ArrayList<Integer> hiddenNodes = new ArrayList<>(); //TODO hide nodes (make and call hidng methods hide/is hidden/unhide
+    private Object[][] nodeLookup;
     private HashMap<Integer, String> labels = new HashMap<>();
 
     public TimeManager(File inputFile, int windowLength) throws IOException {
@@ -73,6 +73,13 @@ public class TimeManager {
             timeLinks++;
         }
 
+        nodeLookup = new Object[nodes.size()][2];
+        
+        for(Integer i : nodes) {
+            nodeLookup[i][0] = getNodeName(i);
+            nodeLookup[i][1] = true;
+        }
+        
         Collections.sort(topNodes);
         Collections.sort(bottomNodes);
 
@@ -126,7 +133,7 @@ public class TimeManager {
 
             @Override
             public boolean evaluate(TimeLink link) {
-                if (hiddenNodes.contains(link.getTopNode()) || hiddenNodes.contains(link.getTopNode())) {
+                if (!(Boolean) nodeLookup[nodes.indexOf(link.getTopNode())][1] || !(Boolean) nodeLookup[nodes.indexOf(link.getBottomNode())][1]) {
                     return false;
                 }
 
@@ -186,6 +193,10 @@ public class TimeManager {
     public String getNodeName(int node) {
         return new Integer(node).toString();
     }
+    
+    public Object[][] getNodeLookup() {
+        return nodeLookup;
+    }
 
     public ArrayList<Integer> getNodeList() {
         return nodes;
@@ -221,18 +232,6 @@ public class TimeManager {
 
     public void setDurationScalingFactor(int durationScalingFactor) {
         this.durationScalingFactor = durationScalingFactor;
-    }
-
-    public void setNodeVisibility(int i, boolean visible) {
-        if (visible) {
-            if (hiddenNodes.contains(i)) {
-                hiddenNodes.remove(i);
-            }
-        } else {
-            if (!hiddenNodes.contains(i)) {
-                hiddenNodes.add(i);
-            }
-        }
     }
 
     public final void updateWindow(int offset) {

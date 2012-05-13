@@ -1,6 +1,5 @@
 package com.timer.core;
 
-
 import com.timer.gui.LinkPanelBottom;
 import com.timer.gui.LinkPanelTop;
 import com.timer.gui.TimePanel;
@@ -17,6 +16,8 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -27,7 +28,7 @@ import javax.swing.event.ChangeListener;
  * @author Peter Hoek
  */
 public class Main extends JFrame {
-    
+
     public static final int WINDOWLENGTH = 990;
 
     /**
@@ -39,7 +40,7 @@ public class Main extends JFrame {
 
     public Main() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
+
         try {
             JLayeredPane jp = new JLayeredPane();
 
@@ -53,7 +54,7 @@ public class Main extends JFrame {
 
             final TimePanel timePanel = new TimePanel(manager, linkPanelTop, linkPanelBottom);
             timePanel.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 100));
-            
+
             final JScrollPane linksTop = new JScrollPane(linkPanelTop);
             linksTop.setBounds(350, 400, 1000, 250);
             linksTop.setBorder(BorderFactory.createEmptyBorder());
@@ -71,7 +72,7 @@ public class Main extends JFrame {
             times.setBorder(BorderFactory.createEmptyBorder());
             times.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
             times.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
-            
+
             TransparentPanel tp = new TransparentPanel(manager);
             tp.setBounds(350, 650, 1000, 100);
             tp.setOpaque(false);
@@ -118,12 +119,29 @@ public class Main extends JFrame {
             });
             timePanelScalingFactorBar.setBounds(5, 600, 200, 50);
 
+            String[] columns = {"Node", "?"};
+            
+            DefaultTableModel dtm = new DefaultTableModel();
+            dtm.setDataVector(manager.getNodeLookup(), columns);
+
+            final JTable visiblePanel = new JTable(dtm);
+
+            visiblePanel.getColumnModel().getColumn(0).setPreferredWidth(300);
+
+            TableColumn checkBoxColumn = visiblePanel.getColumnModel().getColumn(1);
+            checkBoxColumn.setCellRenderer(visiblePanel.getDefaultRenderer(Boolean.class));
+            checkBoxColumn.setCellEditor(visiblePanel.getDefaultEditor(Boolean.class));
+
+            JScrollPane visibleChooser = new JScrollPane(visiblePanel);
+            visibleChooser.setBounds(0, 0, 200, 500);
+
             jp.add(linksTop, new Integer(0));
             jp.add(linksBottom, new Integer(0));
             jp.add(times, new Integer(1));
             jp.add(tp, new Integer(2));
             jp.add(durationScalingFactorBar, new Integer(3));
             jp.add(timePanelScalingFactorBar, new Integer(3));
+            jp.add(visibleChooser, new Integer(3));
 
             add(jp);
         } catch (IOException ex) {
