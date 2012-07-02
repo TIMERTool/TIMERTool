@@ -13,10 +13,10 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import org.timer.gui.graph.GraphPanel;
-import org.timer.gui.multislider.LinkPanelBottom;
-import org.timer.gui.multislider.LinkPanelTop;
-import org.timer.gui.multislider.TimePanel;
-import org.timer.gui.multislider.TransparentPanel;
+import org.timer.gui.multislider.link.LinkPanelBottom;
+import org.timer.gui.multislider.link.LinkPanelTop;
+import org.timer.gui.multislider.time.TimePanel;
+import org.timer.gui.multislider.time.TransparentPanel;
 import org.timer.model.TimeManager;
 
 /*

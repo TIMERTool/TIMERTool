@@ -1,16 +1,17 @@
-package org.timer.gui.multislider;
+package org.timer.gui.multislider.time;
 
 
 import org.timer.model.TimeLink;
 import org.timer.model.TimeManager;
 import org.timer.gui.multislider.ScrollPanel;
-import org.timer.gui.multislider.LinkPanelBottom;
-import org.timer.gui.multislider.LinkPanelTop;
+import org.timer.gui.multislider.link.LinkPanelBottom;
+import org.timer.gui.multislider.link.LinkPanelTop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.util.Iterator;
 import org.timer.gui.graph.GraphPanel;
+import org.timer.gui.multislider.ScrollPanel;
 
 /*
  * To change this template, choose Tools | Templates and open the template in

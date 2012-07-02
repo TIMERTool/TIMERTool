@@ -1,4 +1,5 @@
-package org.timer.gui.multislider;
+package org.timer.gui.multislider.link;
+
 
 import org.timer.model.TimeLink;
 import org.timer.model.TimeManager;
@@ -7,12 +8,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.Iterator;
+import org.timer.gui.multislider.ScrollPanel;
 
-public class LinkPanelTop extends ScrollPanel {
+public class LinkPanelBottom extends ScrollPanel {
 
     private final TimeManager manager;
 
-    public LinkPanelTop(TimeManager manager) {
+    public LinkPanelBottom(TimeManager manager) {
         this.manager = manager;
     }
 
@@ -25,7 +27,7 @@ public class LinkPanelTop extends ScrollPanel {
 
         while (it.hasNext()) {
             TimeLink upTo = it.next();
-            int pixel = manager.topNodeToPixel(upTo.getTopNode());
+            int pixel = manager.bottomNodeToPixel(upTo.getBottomNode());
 
             if (pixel != -1) {
                 g2.setColor(upTo.getColour());
@@ -33,14 +35,13 @@ public class LinkPanelTop extends ScrollPanel {
                 AffineTransform fontAT = new AffineTransform();
                 Font theFont = g2.getFont();
 
-                fontAT.rotate(-(Math.PI / 2));
+                fontAT.rotate(Math.PI / 2);
                 Font theDerivedFont = theFont.deriveFont(fontAT);
 
                 g2.setFont(theDerivedFont);
-                g2.drawString(manager.getNodeName(upTo.getTopNode()), pixel + 4, 75);
+                g2.drawString(manager.getNodeName(upTo.getBottomNode()), pixel - 4, 176);
                 g2.setFont(theFont);                
-                
-                g2.drawLine(pixel, 75, manager.linkTimeToPixel(upTo.getTime()) + (getVisibleStart() - manager.getTimePanelVisibleStart()), 249);
+                g2.drawLine(pixel, 174, manager.linkTimeToPixel(upTo.getTime()) + (getVisibleStart() - manager.getTimePanelVisibleStart()), 0);
             }
         }
     }

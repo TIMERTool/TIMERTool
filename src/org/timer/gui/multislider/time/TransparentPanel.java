@@ -1,4 +1,4 @@
-package org.timer.gui.multislider;
+package org.timer.gui.multislider.time;
 
 
 import org.timer.model.TimeManager;
