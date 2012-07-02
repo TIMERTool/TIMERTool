@@ -1,7 +1,7 @@
-package com.timer.model;
+package org.timer.model;
 
 
-import com.timer.model.TimeLink;
+import org.timer.model.TimeLink;
 
 /*
  * To change this template, choose Tools | Templates

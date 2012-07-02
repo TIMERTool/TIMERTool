@@ -1,15 +1,16 @@
-package com.timer.gui;
+package org.timer.gui.multislider;
 
 
-import com.timer.model.TimeLink;
-import com.timer.model.TimeManager;
-import com.timer.gui.ScrollPanel;
-import com.timer.gui.LinkPanelBottom;
-import com.timer.gui.LinkPanelTop;
+import org.timer.model.TimeLink;
+import org.timer.model.TimeManager;
+import org.timer.gui.multislider.ScrollPanel;
+import org.timer.gui.multislider.LinkPanelBottom;
+import org.timer.gui.multislider.LinkPanelTop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.util.Iterator;
+import org.timer.gui.graph.GraphPanel;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -24,11 +25,13 @@ public class TimePanel extends ScrollPanel {
     private final TimeManager manager;
     private final LinkPanelTop linkPanelTop;
     private final LinkPanelBottom linkPanelBottom;
+    private final GraphPanel graphPanel;
 
-    public TimePanel(TimeManager manager, LinkPanelTop linkPanelTop, LinkPanelBottom linkPanelBottom) {
+    public TimePanel(TimeManager manager, LinkPanelTop linkPanelTop, LinkPanelBottom linkPanelBottom, GraphPanel graphPanel) {
         this.manager = manager;
         this.linkPanelTop = linkPanelTop;
         this.linkPanelBottom = linkPanelBottom;
+        this.graphPanel = graphPanel;
         
         setOpaque(true);
     }
@@ -44,7 +47,7 @@ public class TimePanel extends ScrollPanel {
             TimeLink upTo = it.next();
             int pixel = manager.linkTimeToPixel(upTo.getTime());
             
-            int thickness = manager.getDurationScalingFactor() > 0 ? upTo.getDuration() / manager.getDurationScalingFactor() : 1;
+            int thickness = manager.getDurationScalingFactor() > 0 ? upTo.getDuration() / 50 * manager.getDurationScalingFactor() : 1;
             
             if(thickness < 1) {
                 thickness = 1;
@@ -68,5 +71,7 @@ public class TimePanel extends ScrollPanel {
     @Override
     protected void didScroll(int amount) {
         manager.updateWindow(amount);
+        
+        graphPanel.update(manager.getVisibleTimeLinksIterator());
     }
 }

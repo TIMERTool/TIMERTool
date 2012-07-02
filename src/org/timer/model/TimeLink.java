@@ -1,7 +1,8 @@
-package com.timer.model;
+package org.timer.model;
 
 
 import java.awt.Color;
+import java.util.Objects;
 
 /*
  * To change this template, choose Tools | Templates
@@ -33,8 +34,33 @@ public class TimeLink {
     }
     
     @Override
-    public String toString() {
-        return "TopNode:"+topNode+" BottomNode:"+bottomNode+" Time:"+time;
+    public boolean equals(Object other) {
+        if (other instanceof TimeLink) {
+            TimeLink otherTimeLink = (TimeLink) other;
+            
+            if(prev == otherTimeLink.prev &&
+                   next == otherTimeLink.next &&
+                   topNode == otherTimeLink.topNode &&
+                   time == otherTimeLink.time &&
+                   bottomNode == otherTimeLink.bottomNode &&
+                   duration == otherTimeLink.duration &&
+                   colour == otherTimeLink.colour) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + this.topNode;
+        hash = 89 * hash + this.time;
+        hash = 89 * hash + this.bottomNode;
+        hash = 89 * hash + this.duration;
+        hash = 89 * hash + Objects.hashCode(this.colour);
+        return hash;
     }
 
     /**

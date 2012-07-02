@@ -1,7 +1,7 @@
-package com.timer.gui;
+package org.timer.gui.multislider;
 
 
-import com.timer.model.TimeManager;
+import org.timer.model.TimeManager;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JPanel;
@@ -26,7 +26,7 @@ public class TransparentPanel extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         
-        g.setColor(new Color(238, 238, 238, 200));
+        g.setColor(new Color(214, 217, 223, 200));
         g.fillRect(0, 0, manager.getTimeWindowStart(), 100);
         g.fillRect(manager.getTimeWindowEnd() + 1, 0, manager.getTimeWindowLength()+ manager.getTimeWindowEnd(), 100);
         

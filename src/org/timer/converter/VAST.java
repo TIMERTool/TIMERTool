@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.timer.converter;
+package org.timer.converter;
 
 import java.io.*;
 

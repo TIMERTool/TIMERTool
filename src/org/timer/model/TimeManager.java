@@ -1,4 +1,4 @@
-package com.timer.model;
+package org.timer.model;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.swing.JOptionPane;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -19,12 +18,12 @@ import javax.swing.JOptionPane;
  *
  * @author Peter Hoek
  */
-public class TimeManager {
+public final class TimeManager {
 
     private TimeLink first, last, start, end;
-    private int timePanelSideOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, totalTopLinkPanelLength, totalBottomLinkPanelLength, minTime, maxTime, timePanelScalingFactor = 1, timeLinks, durationScalingFactor = 0;
+    private int timePanelSideOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, minTime, maxTime, timePanelScalingFactor = 1, timeLinks, durationScalingFactor = 0;
     private boolean colourByTo = false;
-    private static final Color[] colours = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.BLACK, Color.WHITE, Color.LIGHT_GRAY};
+    private static final Color[] colours = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.BLACK, Color.LIGHT_GRAY};
     private ArrayList<Integer> nodes = new ArrayList<>();
     private ArrayList<Integer> topNodes = new ArrayList<>();
     private ArrayList<Integer> bottomNodes = new ArrayList<>();
@@ -73,12 +72,15 @@ public class TimeManager {
 
             timeLinks++;
         }
-
-        nodeLookup = new Object[nodes.size()][2];
         
-        for(Integer i : nodes) {
-            nodeLookup[i][0] = getNodeName(i);
+        Collections.sort(nodes);
+
+        nodeLookup = new Object[nodes.size()][3];
+        
+        for(int i = 0; i < nodes.size(); i++) {
+            nodeLookup[i][0] = getNodeName(nodes.get(i));
             nodeLookup[i][1] = true;
+            nodeLookup[i][2] = true;
         }
         
         Collections.sort(topNodes);
@@ -89,8 +91,6 @@ public class TimeManager {
         this.timeWindowLength = windowLength;
         this.timeWindowVisibleStart = 0;
         this.totalTimePanelLength = windowLength - (getTimePanelSidePadding() * 2);
-        this.totalTopLinkPanelLength = topNodes.size() * 10;
-        this.totalBottomLinkPanelLength = bottomNodes.size() * 10;
         this.first = start;
         this.last = end;
         this.minTime = start.getTime();
@@ -126,7 +126,11 @@ public class TimeManager {
 
             @Override
             public boolean evaluate(TimeLink link) {
-                return true;
+                if((Boolean) nodeLookup[nodes.indexOf(link.getTopNode())][1] && (Boolean) nodeLookup[nodes.indexOf(link.getBottomNode())][2]) {
+                    return true;
+                }
+                
+                return false;
             }
         });
     }
@@ -136,11 +140,11 @@ public class TimeManager {
 
             @Override
             public boolean evaluate(TimeLink link) {
-                if (!(Boolean) nodeLookup[nodes.indexOf(link.getTopNode())][1] || !(Boolean) nodeLookup[nodes.indexOf(link.getBottomNode())][1]) {
-                    return false;
+                if((Boolean) nodeLookup[nodes.indexOf(link.getTopNode())][1] && (Boolean) nodeLookup[nodes.indexOf(link.getBottomNode())][2]) {
+                    return true;
                 }
 
-                return true;
+                return false;
             }
         });
     }
@@ -170,11 +174,11 @@ public class TimeManager {
     }
 
     public int getTopLinkPanelTotalLength() {
-        return totalTopLinkPanelLength;
+        return (topNodes.size() * (10 + 1)) + 5;
     }
 
     public int getBottomLinkPanelTotalLength() {
-        return totalBottomLinkPanelLength;
+        return (bottomNodes.size() * (10 + 1)) + 5;
     }
 
     public int getTimeWindowLength() {
@@ -216,7 +220,7 @@ public class TimeManager {
             throw new IllegalArgumentException("Invalid Node.");
         }
 
-        return ((int) ((double) index * (((double) totalBottomLinkPanelLength / (double) topNodes.size()) + 1))) + 5;
+        return (index * (10 + 1)) + 5;
     }
 
     public int bottomNodeToPixel(int node) {
@@ -226,7 +230,7 @@ public class TimeManager {
             throw new IllegalArgumentException("Invalid Node.");
         }
 
-        return ((int) ((double) index * (((double) totalBottomLinkPanelLength / (double) bottomNodes.size()) + 1))) + 5;
+        return (index * (10 + 1)) + 5;
     }
 
     public void setTimePanelScalingFactor(int timePanelScalingFactor) {
@@ -244,7 +248,7 @@ public class TimeManager {
     }
 
     public final void setUpWindow() {
-        int thickness = getDurationScalingFactor() > 0 ? Math.max(first.getDuration(), last.getDuration()) / getDurationScalingFactor() : 1;
+        int thickness = getDurationScalingFactor() > 0 ? Math.max(first.getDuration(), last.getDuration()) / 50 * getDurationScalingFactor() : 1;
 
         if (thickness < 1) {
             thickness = 1;

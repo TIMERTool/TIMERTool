@@ -1,4 +1,4 @@
-package com.timer.gui;
+package org.timer.gui.multislider;
 
 
 import java.awt.Cursor;
