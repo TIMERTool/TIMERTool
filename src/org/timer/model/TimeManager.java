@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2012, Peter Hoek
+ * All rights reserved.
+ */
 package org.timer.model;
 
 import java.awt.Color;
@@ -10,10 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 /**
  *
  * @author Peter Hoek
@@ -72,17 +72,17 @@ public final class TimeManager {
 
             timeLinks++;
         }
-        
+
         Collections.sort(nodes);
 
         nodeLookup = new Object[nodes.size()][3];
-        
-        for(int i = 0; i < nodes.size(); i++) {
+
+        for (int i = 0; i < nodes.size(); i++) {
             nodeLookup[i][0] = getNodeName(nodes.get(i));
             nodeLookup[i][1] = true;
             nodeLookup[i][2] = true;
         }
-        
+
         Collections.sort(topNodes);
         Collections.sort(bottomNodes);
 
@@ -91,6 +91,9 @@ public final class TimeManager {
         this.timeWindowLength = windowLength;
         this.timeWindowVisibleStart = 0;
         this.totalTimePanelLength = windowLength - (getTimePanelSidePadding() * 2);
+        System.out.println(windowLength);
+        System.out.println(getTimePanelSidePadding());
+        System.out.println(totalTimePanelLength);
         this.first = start;
         this.last = end;
         this.minTime = start.getTime();
@@ -103,8 +106,8 @@ public final class TimeManager {
         ArrayList<TimeLink> list = new ArrayList<>();
 
         if (start == null || end == null) {
-            System.out.println("Null start or end timelink node.\n\nStart:"+start+"\nEnd:"+end.toString());
-            
+            System.out.println("Null start or end timelink node.\n\nStart:" + start + "\nEnd:" + end.toString());
+
             System.exit(1);
         }
 
@@ -116,8 +119,6 @@ public final class TimeManager {
             start = start.getNext();
         }
 
-        list.add(end);
-
         return list.iterator();
     }
 
@@ -126,10 +127,10 @@ public final class TimeManager {
 
             @Override
             public boolean evaluate(TimeLink link) {
-                if((Boolean) nodeLookup[nodes.indexOf(link.getTopNode())][1] && (Boolean) nodeLookup[nodes.indexOf(link.getBottomNode())][2]) {
+                if ((Boolean) nodeLookup[nodes.indexOf(link.getTopNode())][1] && (Boolean) nodeLookup[nodes.indexOf(link.getBottomNode())][2]) {
                     return true;
                 }
-                
+
                 return false;
             }
         });
@@ -140,7 +141,7 @@ public final class TimeManager {
 
             @Override
             public boolean evaluate(TimeLink link) {
-                if((Boolean) nodeLookup[nodes.indexOf(link.getTopNode())][1] && (Boolean) nodeLookup[nodes.indexOf(link.getBottomNode())][2]) {
+                if ((Boolean) nodeLookup[nodes.indexOf(link.getTopNode())][1] && (Boolean) nodeLookup[nodes.indexOf(link.getBottomNode())][2]) {
                     return true;
                 }
 
@@ -157,16 +158,12 @@ public final class TimeManager {
         return maxTime;
     }
 
-    public int getTimePanelScalingFactor() {
-        return timePanelScalingFactor;
-    }
-
     public int getTimePanelVisibleStart() {
         return timeWindowVisibleStart;
     }
 
     public int getTimePanelTotalLength() {
-        return (timePanelSideOffset + totalTimePanelLength + timePanelSideOffset) * timePanelScalingFactor;
+        return linkTimeToPixel(maxTime) + timePanelSideOffset;
     }
 
     public final int getTimePanelSidePadding() {
@@ -200,7 +197,7 @@ public final class TimeManager {
     public String getNodeName(int node) {
         return new Integer(node).toString();
     }
-    
+
     public Object[][] getNodeLookup() {
         return nodeLookup;
     }
@@ -210,7 +207,7 @@ public final class TimeManager {
     }
 
     public int linkTimeToPixel(int time) {
-        return ((int) (((double) (time - minTime)) * (((double) totalTimePanelLength / (double) (maxTime - minTime)) * (double) timePanelScalingFactor))) + timePanelSideOffset;
+        return ((int) ((double) totalTimePanelLength / (double) (maxTime - minTime) * (time - minTime) * timePanelScalingFactor)) + timePanelSideOffset;
     }
 
     public int topNodeToPixel(int node) {

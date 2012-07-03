@@ -1,13 +1,11 @@
+/*
+ * Copyright (c) 2012, Peter Hoek
+ * All rights reserved.
+ */
 package org.timer.model;
-
 
 import java.awt.Color;
 import java.util.Objects;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
@@ -32,23 +30,23 @@ public class TimeLink {
         this.duration = thickness;
         this.colour = colour;
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (other instanceof TimeLink) {
             TimeLink otherTimeLink = (TimeLink) other;
-            
-            if(prev == otherTimeLink.prev &&
-                   next == otherTimeLink.next &&
-                   topNode == otherTimeLink.topNode &&
-                   time == otherTimeLink.time &&
-                   bottomNode == otherTimeLink.bottomNode &&
-                   duration == otherTimeLink.duration &&
-                   colour == otherTimeLink.colour) {
+
+            if (prev == otherTimeLink.prev
+                    && next == otherTimeLink.next
+                    && topNode == otherTimeLink.topNode
+                    && time == otherTimeLink.time
+                    && bottomNode == otherTimeLink.bottomNode
+                    && duration == otherTimeLink.duration
+                    && colour == otherTimeLink.colour) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -97,7 +95,7 @@ public class TimeLink {
     public int getBottomNode() {
         return bottomNode;
     }
-    
+
     /**
      * @return the duration
      */

@@ -1,17 +1,14 @@
-package org.timer.model;
-
-
-import org.timer.model.TimeLink;
-
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (c) 2012, Peter Hoek
+ * All rights reserved.
  */
+package org.timer.model;
 
 /**
  *
  * @author Peter Hoek
  */
 public abstract class TimeRule {
+
     public abstract boolean evaluate(TimeLink link);
 }

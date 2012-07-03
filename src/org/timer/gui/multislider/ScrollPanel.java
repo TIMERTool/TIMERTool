@@ -1,5 +1,8 @@
+/*
+ * Copyright (c) 2012, Peter Hoek
+ * All rights reserved.
+ */
 package org.timer.gui.multislider;
-
 
 import java.awt.Cursor;
 import java.awt.Point;
@@ -8,10 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.event.MouseInputAdapter;
 
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 /**
  *
  * @author Peter Hoek
@@ -47,7 +46,7 @@ public class ScrollPanel extends JPanel {
                     didScroll(visibleStart - oldVisibleStart);
 
                     repaint();
-                    
+
                     jv.setViewPosition(new Point(visibleStart, 0));
                 }
             }
@@ -77,7 +76,7 @@ public class ScrollPanel extends JPanel {
             repaint();
 
             visibleStart += amount;
-            
+
             jv.setViewPosition(new Point(visibleStart, 0));
         }
     }

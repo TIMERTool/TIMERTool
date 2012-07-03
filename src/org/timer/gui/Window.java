@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2012, Peter Hoek
+ * All rights reserved.
+ */
 package org.timer.gui;
 
 import java.awt.Dimension;
@@ -19,10 +23,6 @@ import org.timer.gui.multislider.time.TimePanel;
 import org.timer.gui.multislider.time.TransparentPanel;
 import org.timer.model.TimeManager;
 
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 /**
  *
  * @author Peter Hoek
@@ -71,7 +71,7 @@ public class Window extends JFrame {
 
         linkPanelBottom = new LinkPanelBottom(manager);
         linkPanelBottom.setPreferredSize(new Dimension(manager.getBottomLinkPanelTotalLength(), 300));
-        
+
         graphPanel = new GraphPanel(manager);
         graphPanel.setBounds(350, 0, 1000, 450);
         graphPanel.update(manager.getVisibleTimeLinksIterator());
@@ -118,7 +118,7 @@ public class Window extends JFrame {
                 }
 
                 manager.setDurationScalingFactor(val);
-                
+
                 timePanel.repaint();
             }
         });
@@ -133,7 +133,7 @@ public class Window extends JFrame {
             @Override
             public void stateChanged(ChangeEvent e) {
                 System.out.println(timePanelScalingFactorBar.getValue());
-                
+
                 manager.setTimePanelScalingFactor(timePanelScalingFactorBar.getValue());
 
                 timePanel.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 100));
@@ -177,10 +177,10 @@ public class Window extends JFrame {
 
         select = new JLabel("Select:");
         select.setBounds(5, 510, 60, 10);
-        
+
         deselect = new JLabel("Deselect:");
         deselect.setBounds(5, 540, 60, 10);
-        
+
         selectAllTop = new JButton("Top");
         selectAllTop.setBounds(60, 500, 75, 30);
 
@@ -195,7 +195,7 @@ public class Window extends JFrame {
                 reloadVisibleTable();
             }
         });
-        
+
         selectAllBottom = new JButton("Bottom");
         selectAllBottom.setBounds(135, 500, 75, 30);
 
@@ -225,7 +225,7 @@ public class Window extends JFrame {
                 reloadVisibleTable();
             }
         });
-        
+
         deselectAllBottom = new JButton("Bottom");
         deselectAllBottom.setBounds(135, 530, 75, 30);
 
@@ -245,13 +245,13 @@ public class Window extends JFrame {
         jp.add(linksTop, new Integer(1));
         jp.add(linksBottom, new Integer(1));
         jp.add(times, new Integer(2));
-        jp.add(tp, new Integer(3));        
+        jp.add(tp, new Integer(3));
         jp.add(durationScalingFactorBar, new Integer(4));
         jp.add(timePanelScalingFactorBar, new Integer(4));
         jp.add(visibleChooser, new Integer(4));
         jp.add(select, new Integer(4));
         jp.add(deselect, new Integer(4));
-        jp.add(selectAllTop, new Integer(4));        
+        jp.add(selectAllTop, new Integer(4));
         jp.add(selectAllBottom, new Integer(4));
         jp.add(deselectAllTop, new Integer(4));
         jp.add(deselectAllBottom, new Integer(4));
