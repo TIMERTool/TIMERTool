@@ -29,8 +29,7 @@ import org.timer.model.TimeManager;
  */
 public class Window extends JFrame {
 
-    //todo sort these
-    public static final int WINDOWLENGTH = 990;
+    public static final int WINDOWLENGTH = 1010;
     public static final String[] columns = {"Node", "Top?", "Bottom?"};
     private final TimeManager manager;
     private LinkPanelTop linkPanelTop;
@@ -48,10 +47,10 @@ public class Window extends JFrame {
     private DefaultTableModel dtm;
     private JScrollPane visibleChooser;
     private GraphPanel graphPanel;
-    private JButton selectAllBottom;
-    private JButton deselectAllBottom;
     private JLabel select;
     private JLabel deselect;
+    private JButton selectAllBottom;
+    private JButton deselectAllBottom;
 
     public Window(TimeManager manager) {
         super();
@@ -60,7 +59,7 @@ public class Window extends JFrame {
         initComponents();
     }
 
-    private void initComponents() {
+    private void initComponents() {        
         setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -75,9 +74,9 @@ public class Window extends JFrame {
         graphPanel = new GraphPanel(manager);
         graphPanel.setBounds(350, 0, 1000, 450);
         graphPanel.update(manager.getVisibleTimeLinksIterator());
-
+        
         timePanel = new TimePanel(manager, linkPanelTop, linkPanelBottom, graphPanel);
-        timePanel.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 100));
+        timePanel.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 100 + 400));
 
         linksTop = new JScrollPane(linkPanelTop);
         linksTop.setBounds(350, 400, 1000, 250);
@@ -86,19 +85,19 @@ public class Window extends JFrame {
         linksTop.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
 
         linksBottom = new JScrollPane(linkPanelBottom);
-        linksBottom.setBounds(350, 750, 1000, 300);
+        linksBottom.setBounds(350, 750, 1000, 190);
         linksBottom.setBorder(BorderFactory.createEmptyBorder());
         linksBottom.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
         linksBottom.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
-
+        
         times = new JScrollPane(timePanel);
-        times.setBounds(350, 650, 1000, 100);
+        times.setBounds(345, 650, 1010, 100 + 400);
         times.setBorder(BorderFactory.createEmptyBorder());
         times.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
         times.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
 
         tp = new TransparentPanel(manager);
-        tp.setBounds(350, 650, 1000, 100);
+        tp.setBounds(345, 650, 1010, 100);
         tp.setOpaque(false);
 
         durationScalingFactorBar = new JSlider();
@@ -132,9 +131,7 @@ public class Window extends JFrame {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                System.out.println(timePanelScalingFactorBar.getValue());
-
-                manager.setTimePanelScalingFactor(timePanelScalingFactorBar.getValue());
+                manager.setTimePanelScalingFactor(Math.pow((double) timePanelScalingFactorBar.getValue() / 75D, 2) + 1);
 
                 timePanel.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 100));
                 times.getViewport().setViewPosition(new Point(manager.getTimePanelTotalLength(), 100));
@@ -242,9 +239,9 @@ public class Window extends JFrame {
         });
 
         jp.add(graphPanel, new Integer(0));
-        jp.add(linksTop, new Integer(1));
-        jp.add(linksBottom, new Integer(1));
-        jp.add(times, new Integer(2));
+        jp.add(times, new Integer(1));
+        jp.add(linksTop, new Integer(2));
+        jp.add(linksBottom, new Integer(2));
         jp.add(tp, new Integer(3));
         jp.add(durationScalingFactorBar, new Integer(4));
         jp.add(timePanelScalingFactorBar, new Integer(4));

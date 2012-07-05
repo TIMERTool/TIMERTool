@@ -2,7 +2,7 @@
  * Copyright (c) 2012, Peter Hoek
  * All rights reserved.
  */
-package org.timer.gui.multislider;
+package org.timer.gui;
 
 import java.awt.Cursor;
 import java.awt.Point;
@@ -21,6 +21,8 @@ public class ScrollPanel extends JPanel {
     private int visibleStart;
 
     public ScrollPanel() {
+        super();
+        
         MouseInputAdapter mia = new MouseInputAdapter() {
 
             @Override

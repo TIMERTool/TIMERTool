@@ -11,7 +11,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -21,18 +20,17 @@ import java.util.Iterator;
 public final class TimeManager {
 
     private TimeLink first, last, start, end;
-    private int timePanelSideOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, minTime, maxTime, timePanelScalingFactor = 1, timeLinks, durationScalingFactor = 0;
+    private int timePanelSideOffset, timeWindowVisibleStart, timeWindowLength, totalTimePanelLength, minTime, maxTime, timeLinks, durationScalingFactor = 0;
+    private double timePanelScalingFactor = 1;
     private boolean colourByTo = false;
     private static final Color[] colours = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.BLACK, Color.LIGHT_GRAY};
     private ArrayList<Integer> nodes = new ArrayList<>();
     private ArrayList<Integer> topNodes = new ArrayList<>();
     private ArrayList<Integer> bottomNodes = new ArrayList<>();
     private Object[][] nodeLookup;
-    private HashMap<Integer, String> labels = new HashMap<>();
 
     public TimeManager(File inputFile, int windowLength) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(inputFile));
-        br.readLine();
 
         String line;
         while ((line = br.readLine()) != null) {
@@ -91,9 +89,6 @@ public final class TimeManager {
         this.timeWindowLength = windowLength;
         this.timeWindowVisibleStart = 0;
         this.totalTimePanelLength = windowLength - (getTimePanelSidePadding() * 2);
-        System.out.println(windowLength);
-        System.out.println(getTimePanelSidePadding());
-        System.out.println(totalTimePanelLength);
         this.first = start;
         this.last = end;
         this.minTime = start.getTime();
@@ -166,6 +161,10 @@ public final class TimeManager {
         return linkTimeToPixel(maxTime) + timePanelSideOffset;
     }
 
+    public double getTimePanelScalingFactor() {
+        return timePanelScalingFactor;
+    }
+    
     public final int getTimePanelSidePadding() {
         return ((int) (getTimeWindowStart() * 1.25f));
     }
@@ -230,7 +229,7 @@ public final class TimeManager {
         return (index * (10 + 1)) + 5;
     }
 
-    public void setTimePanelScalingFactor(int timePanelScalingFactor) {
+    public void setTimePanelScalingFactor(double timePanelScalingFactor) {
         this.timePanelScalingFactor = timePanelScalingFactor;
     }
 

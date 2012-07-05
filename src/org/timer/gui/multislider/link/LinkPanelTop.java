@@ -9,7 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.Iterator;
-import org.timer.gui.multislider.ScrollPanel;
+import org.timer.gui.ScrollPanel;
 import org.timer.model.TimeLink;
 import org.timer.model.TimeManager;
 
@@ -18,6 +18,8 @@ public class LinkPanelTop extends ScrollPanel {
     private final TimeManager manager;
 
     public LinkPanelTop(TimeManager manager) {
+        super();
+        
         this.manager = manager;
     }
 
