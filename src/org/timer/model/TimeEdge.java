@@ -11,30 +11,30 @@ import java.util.Objects;
  *
  * @author Peter Hoek
  */
-public class TimeLink {
+public class TimeEdge {
 
-    private TimeLink prev;
-    private TimeLink next;
+    private TimeEdge prev;
+    private TimeEdge next;
     private int topNode;
-    private int time;
     private int bottomNode;
+    private AbstractDate time;
     private int duration;
     private Color colour;
 
-    public TimeLink(TimeLink prev, TimeLink next, int topNode, int time, int bottomNode, int thickness, Color colour) {
+    public TimeEdge(TimeEdge prev, TimeEdge next, int topNode, AbstractDate time, int bottomNode, int thickness, Color colour) {
         this.prev = prev;
         this.next = next;
         this.topNode = topNode;
-        this.time = time;
         this.bottomNode = bottomNode;
+        this.time = time;
         this.duration = thickness;
         this.colour = colour;
     }
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof TimeLink) {
-            TimeLink otherTimeLink = (TimeLink) other;
+        if (other instanceof TimeEdge) {
+            TimeEdge otherTimeLink = (TimeEdge) other;
 
             if (prev == otherTimeLink.prev
                     && next == otherTimeLink.next
@@ -54,7 +54,7 @@ public class TimeLink {
     public int hashCode() {
         int hash = 7;
         hash = 89 * hash + this.topNode;
-        hash = 89 * hash + this.time;
+        hash = 89 * hash + Objects.hashCode(this.time);
         hash = 89 * hash + this.bottomNode;
         hash = 89 * hash + this.duration;
         hash = 89 * hash + Objects.hashCode(this.colour);
@@ -64,14 +64,14 @@ public class TimeLink {
     /**
      * @return the next
      */
-    public TimeLink getNext() {
+    public TimeEdge getNext() {
         return next;
     }
 
     /**
      * @return the prev
      */
-    public TimeLink getPrev() {
+    public TimeEdge getPrev() {
         return prev;
     }
 
@@ -85,7 +85,7 @@ public class TimeLink {
     /**
      * @return the time
      */
-    public int getTime() {
+    public AbstractDate getTime() {
         return time;
     }
 
@@ -113,14 +113,14 @@ public class TimeLink {
     /**
      * @param next the next to set
      */
-    public void setNext(TimeLink next) {
+    public void setNext(TimeEdge next) {
         this.next = next;
     }
 
     /**
      * @param prev the prev to set
      */
-    public void setPrev(TimeLink prev) {
+    public void setPrev(TimeEdge prev) {
         this.prev = prev;
     }
 
@@ -134,7 +134,7 @@ public class TimeLink {
     /**
      * @param time the time to set
      */
-    public void setTime(int time) {
+    public void setTime(AbstractDate time) {
         this.time = time;
     }
 

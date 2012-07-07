@@ -2,25 +2,28 @@
  * Copyright (c) 2012, Peter Hoek
  * All rights reserved.
  */
-package org.timer.gui.multislider.link;
+package org.timer.gui;
 
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.Iterator;
-import org.timer.gui.ScrollPanel;
-import org.timer.model.TimeLink;
-import org.timer.model.TimeManager;
+import org.timer.model.Model;
+import org.timer.model.TimeEdge;
 
-public class LinkPanelTop extends ScrollPanel {
+/**
+ *
+ * @author Peter Hoek
+ */
+public class EdgeTopPanel extends ScrollPanel {
 
-    private final TimeManager manager;
+    private final Model model;
 
-    public LinkPanelTop(TimeManager manager) {
+    public EdgeTopPanel(Model model) {
         super();
-        
-        this.manager = manager;
+
+        this.model = model;
     }
 
     @Override
@@ -28,11 +31,11 @@ public class LinkPanelTop extends ScrollPanel {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        Iterator<TimeLink> it = manager.getVisibleTimeLinksIterator();
+        Iterator<TimeEdge> it = model.getVisibleTimeLinksIterator();
 
         while (it.hasNext()) {
-            TimeLink upTo = it.next();
-            int pixel = manager.topNodeToPixel(upTo.getTopNode());
+            TimeEdge upTo = it.next();
+            int pixel = model.topNodeToPixel(upTo.getTopNode());
 
             if (pixel != -1) {
                 g2.setColor(upTo.getColour());
@@ -44,10 +47,10 @@ public class LinkPanelTop extends ScrollPanel {
                 Font theDerivedFont = theFont.deriveFont(fontAT);
 
                 g2.setFont(theDerivedFont);
-                g2.drawString(manager.getNodeName(upTo.getTopNode()), pixel + 4, 75);
+                g2.drawString(model.getNodeName(upTo.getTopNode()), pixel + 4, 22);
                 g2.setFont(theFont);
 
-                g2.drawLine(pixel, 75, manager.linkTimeToPixel(upTo.getTime()) + (getVisibleStart() - manager.getTimePanelVisibleStart()), 249);
+                g2.drawLine(pixel, 22, model.linkTimeToPixel(upTo.getTime()) + (getVisibleStart() - model.getTimePanelVisibleStart()), 198);
             }
         }
     }

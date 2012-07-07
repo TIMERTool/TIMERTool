@@ -2,26 +2,19 @@
  * Copyright (c) 2012, Peter Hoek
  * All rights reserved.
  */
-package org.timer.gui.multislider.time;
+package org.timer.gui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.MouseAdapter;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.util.Iterator;
 import javax.swing.JToolTip;
+import javax.swing.JViewport;
 import javax.swing.event.MouseInputAdapter;
-import org.timer.gui.ScrollPanel;
-import org.timer.gui.graph.GraphPanel;
-import org.timer.gui.multislider.link.LinkPanelBottom;
-import org.timer.gui.multislider.link.LinkPanelTop;
-import org.timer.model.TimeLink;
-import org.timer.model.TimeManager;
+import org.timer.model.Model;
+import org.timer.model.TimeEdge;
 
 /**
  *
@@ -30,21 +23,19 @@ import org.timer.model.TimeManager;
 public class TimePanel extends ScrollPanel {
 
     public static final int INTERVALSIZE = 20;
-    private final TimeManager manager;
-    private final LinkPanelTop linkPanelTop;
-    private final LinkPanelBottom linkPanelBottom;
+    private final Model model;
+    private final EdgeTopPanel edgeTopPanel;
+    private final EdgeBottomPanel edgeBottomPanel;
     private final GraphPanel graphPanel;
     private final JToolTip toolTip = new JToolTip();
-    private int mouseLoc = -1;
-    private boolean renderTimeIndicator = false;
-    private boolean canScrollZoom;
+    private int rawZoom, mouseLoc = -1;
 
-    public TimePanel(TimeManager manager, LinkPanelTop linkPanelTop, LinkPanelBottom linkPanelBottom, GraphPanel graphPanel) {
+    public TimePanel(final Model model, EdgeTopPanel linkPanelTop, EdgeBottomPanel linkPanelBottom, final GraphPanel graphPanel) {
         super();
 
-        this.manager = manager;
-        this.linkPanelTop = linkPanelTop;
-        this.linkPanelBottom = linkPanelBottom;
+        this.model = model;
+        this.edgeTopPanel = linkPanelTop;
+        this.edgeBottomPanel = linkPanelBottom;
         this.graphPanel = graphPanel;
 
         setOpaque(false);
@@ -86,34 +77,50 @@ public class TimePanel extends ScrollPanel {
 
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                //if(mouseLoc ) {
-                //}
+                if (e.getWheelRotation() != 0) {
+                    rawZoom += e.getWheelRotation() * 16;
+
+                    if (rawZoom < 0) {
+                        rawZoom = 0;
+                    }
+
+                    double oldLen = model.getTimePanelTotalLength();
+
+                    model.setTimePanelScalingFactor(Math.pow((double) rawZoom / 75D, 2) + 1);
+
+                    setPreferredSize(new Dimension(model.getTimePanelTotalLength(), 100));
+                    ((JViewport) getParent()).setViewPosition(new Point(model.getTimePanelTotalLength(), 100));
+
+                    double changeRatio = ((double) model.getTimePanelTotalLength()) / oldLen;
+
+                    scrollBy(1 + (int) (((int) (changeRatio * ((double) model.getTimePanelVisibleStart() + (((double) model.getTimeWindowLength()) / 2D)))) - ((double) model.getTimePanelVisibleStart() + (((double) model.getTimeWindowLength()) / 2D))));
+
+                    model.updateWindow(getVisibleStart());
+
+                    graphPanel.update(model.getVisibleTimeLinksIterator());
+                }
             }
         };
 
         addMouseListener(adapter);
         addMouseMotionListener(adapter);
+        addMouseWheelListener(adapter);
     }
 
     public void updateMouseLoc(int x, int y) {
-        mouseLoc = x;
+        x -= 1;
 
         if (y >= 299) {
-            renderTimeIndicator = true;
+            mouseLoc = x;
 
-            toolTip.setTipText(new Integer(((int) ((x - 166) * (double) (manager.getMaxTime() - manager.getMinTime()) / (double) getWidth())) + manager.getMinTime()).toString());
-
+            toolTip.setVisible(true);
+            toolTip.setTipText(model.formatDate(model.pixelToLinkTime(x)));
             toolTip.setLocation(x - toolTip.getWidth(), y);
             toolTip.setVisible(true);
         } else {
-            renderTimeIndicator = false;
-            toolTip.setVisible(false);
+            mouseLoc = -1;
 
-            if (y <= 100) {
-                canScrollZoom = true;
-            } else {
-                canScrollZoom = false;
-            }
+            toolTip.setVisible(false);
         }
     }
 
@@ -121,13 +128,13 @@ public class TimePanel extends ScrollPanel {
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        Iterator<TimeLink> it = manager.getAllTimeLinksIterator();
+        Iterator<TimeEdge> it = model.getAllTimeLinksIterator();
 
         while (it.hasNext()) {
-            TimeLink upTo = it.next();
-            int pixel = manager.linkTimeToPixel(upTo.getTime());
+            TimeEdge upTo = it.next();
+            int pixel = model.linkTimeToPixel(upTo.getTime());
 
-            int thickness = manager.getDurationScalingFactor() > 0 ? upTo.getDuration() / 50 * manager.getDurationScalingFactor() : 1;
+            int thickness = model.getDurationScalingFactor() > 0 ? upTo.getDuration() / 50 * model.getDurationScalingFactor() : 1;
 
             if (thickness < 1) {
                 thickness = 1;
@@ -144,8 +151,6 @@ public class TimePanel extends ScrollPanel {
             g2.draw(new Line2D.Double(pixel + (((double) thickness / 2f)) + 5, 80, pixel + 5, 100));
         }
 
-        //g2.setColor(Color.RED);
-        //g2.fillRect(0, 300, getWidth(), 60);
         g2.setColor(Color.BLACK);
 
         AffineTransform fontAT = new AffineTransform();
@@ -157,23 +162,26 @@ public class TimePanel extends ScrollPanel {
 
         for (int i = 14; i < getWidth(); i += ((double) INTERVALSIZE)) {
             g2.drawLine(i, 300, i, 300 + 5);
-            g2.drawString(new Integer(((int) ((i - 166) * (double) (manager.getMaxTime() - manager.getMinTime()) / (double) getWidth())) + manager.getMinTime()).toString(), i - 4, 300 + 7);
+
+            //model.getMinTime().add((int) ((i - 166) * (double) (model.getMaxTime().subtract(model.getMinTime()).getTimeInUnits()) / (double) getWidth()))
+
+            g2.drawString(model.formatDate(model.pixelToLinkTime(i)), i - 4, 300 + 7);
         }
 
-        if (renderTimeIndicator) {
+        if (mouseLoc > -1) {
             g2.drawLine(mouseLoc, 0, mouseLoc, 100);
         }
 
-        linkPanelTop.repaint();
-        linkPanelBottom.repaint();
+        edgeTopPanel.repaint();
+        edgeBottomPanel.repaint();
 
         super.paint(g);
     }
 
     @Override
     protected void didScroll(int amount) {
-        manager.updateWindow(amount);
+        model.updateWindow(getVisibleStart());
 
-        graphPanel.update(manager.getVisibleTimeLinksIterator());
+        graphPanel.update(model.getVisibleTimeLinksIterator());
     }
 }

@@ -2,9 +2,8 @@
  * Copyright (c) 2012, Peter Hoek
  * All rights reserved.
  */
-package org.timer.gui.graph;
+package org.timer.gui;
 
-import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -22,8 +21,8 @@ import java.util.Iterator;
 import java.util.Objects;
 import javax.swing.JPanel;
 import org.apache.commons.collections15.Transformer;
-import org.timer.model.TimeLink;
-import org.timer.model.TimeManager;
+import org.timer.model.Model;
+import org.timer.model.TimeEdge;
 
 /**
  *
@@ -31,47 +30,47 @@ import org.timer.model.TimeManager;
  */
 public class GraphPanel extends JPanel {
 
-    private final TimeManager manager;
+    private final Model model;
     private Graph<GraphVertex, GraphEdge> graph;
-    private SpringLayout layout;
-    private VisualizationViewer vv;
+    private SpringLayout2<GraphVertex, GraphEdge> layout;
+    private VisualizationViewer<GraphVertex, GraphEdge> vv;
     private DefaultModalGraphMouse<GraphVertex, GraphEdge> graphMouse;
 
-    public GraphPanel(TimeManager manager) {
+    public GraphPanel(Model model, int prefferedWidth, int prefferedHeight) {
         super();
 
-        this.manager = manager;
+        this.model = model;
 
-        initComponents();
+        initComponents(prefferedWidth, prefferedHeight);
     }
 
-    private void initComponents() {
+    private void initComponents(int prefferedWidth, int prefferedHeight) {
         graph = new DirectedSparseGraph<>();
 
         graphMouse = new DefaultModalGraphMouse<>();
 
-        layout = new SpringLayout2(graph);
-        layout.setSize(new Dimension(1000, 400));
+        layout = new SpringLayout2<>(graph);
+        layout.setSize(new Dimension(prefferedWidth, prefferedHeight));
 
-        vv = new VisualizationViewer(layout);
+        vv = new VisualizationViewer<>(layout);
         vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<GraphVertex>());
         vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
         vv.getRenderContext().setEdgeStrokeTransformer(new Transformer<GraphEdge, Stroke>() {
 
             @Override
             public Stroke transform(GraphEdge edge) {
-                return new BasicStroke(edge.getCount());
+                return new BasicStroke(edge.getCount() / model.getGraphPanelEdgeScalingFactor());
             }
         });
-        vv.getRenderContext().setVertexFillPaintTransformer(new PickableVertexPaintTransformer<GraphVertex>(vv.getPickedVertexState(), Color.green, Color.yellow));
+        vv.getRenderContext().setVertexFillPaintTransformer(new PickableVertexPaintTransformer<>(vv.getPickedVertexState(), Color.green, Color.yellow));
         vv.setGraphMouse(graphMouse);
 
         vv.setAutoscrolls(true);
         vv.setAlignmentX(CENTER_ALIGNMENT);
         vv.setAlignmentY(CENTER_ALIGNMENT);
 
-        vv.setSize(new Dimension(1000, 400));
-        vv.setPreferredSize(new Dimension(1000, 400));
+        vv.setSize(new Dimension(prefferedWidth, prefferedHeight));
+        vv.setPreferredSize(new Dimension(prefferedWidth, prefferedHeight));
 
         add(vv);
     }
@@ -126,9 +125,31 @@ public class GraphPanel extends JPanel {
         public String toString() {
             return to.toString() + " - " + from.toString();
         }
+
+        @Override
+        public boolean equals(Object object) {
+            if (object instanceof GraphEdge) {
+                GraphEdge other = (GraphEdge) object;
+
+                if (to.id.equals(other.to.id) && from.id.equals(other.from.id)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 37 * hash + Objects.hashCode(this.to);
+            hash = 37 * hash + Objects.hashCode(this.from);
+            return hash;
+        }
     }
 
-    public void update(Iterator<TimeLink> data) {
+    public void update(Iterator<TimeEdge> data) {
+
         for (GraphVertex vertex : new ArrayList<>(graph.getVertices())) {
             graph.removeVertex(vertex);
         }
@@ -137,9 +158,9 @@ public class GraphPanel extends JPanel {
         ArrayList<GraphEdge> edges = new ArrayList<>();
 
         while (data.hasNext()) {
-            TimeLink link = data.next();
-            GraphVertex vertexTop = new GraphVertex(manager.getNodeName(link.getTopNode()));
-            GraphVertex vertexBottom = new GraphVertex(manager.getNodeName(link.getBottomNode()));
+            TimeEdge link = data.next();
+            GraphVertex vertexTop = new GraphVertex(model.getNodeName(link.getTopNode()));
+            GraphVertex vertexBottom = new GraphVertex(model.getNodeName(link.getBottomNode()));
             GraphEdge edge = new GraphEdge(vertexTop, vertexBottom);
 
             if (!vertices.contains(vertexTop)) {
@@ -152,8 +173,10 @@ public class GraphPanel extends JPanel {
                 graph.addVertex(vertexBottom);
             }
 
-            if (edges.contains(edge)) {
-                GraphEdge theEdge = getEdge(edge);
+            int loc = edges.indexOf(edge);
+
+            if (loc > -1) {
+                GraphEdge theEdge = edges.get(loc);
                 theEdge.setCount(theEdge.getCount() + 1);
             } else {
                 edges.add(edge);
@@ -162,15 +185,5 @@ public class GraphPanel extends JPanel {
         }
 
         repaint();
-    }
-
-    public GraphEdge getEdge(GraphEdge toFind) {
-        for (GraphEdge edge : graph.getEdges()) {
-            if (edge.equals(toFind)) {
-                return edge;
-            }
-        }
-
-        return null;
     }
 }

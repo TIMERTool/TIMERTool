@@ -2,12 +2,11 @@
  * Copyright (c) 2012, Peter Hoek
  * All rights reserved.
  */
-package org.timer.core;
 
 import java.io.File;
 import java.io.IOException;
-import org.timer.gui.Window;
-import org.timer.model.TimeManager;
+import org.timer.gui.GUI;
+import org.timer.model.Model;
 
 /**
  *
@@ -15,7 +14,7 @@ import org.timer.model.TimeManager;
  */
 public class Main {
 
-    public static final int WINDOWLENGTH = 990;
+    public static final int WINDOWLENGTH = 1010;
 
     public static void main(String args[]) throws IOException {
         /*
@@ -39,6 +38,6 @@ public class Main {
         }
         //</editor-fold>
 
-        new Window(new TimeManager(new File("input.csv"), WINDOWLENGTH)).setVisible(true);
+        new GUI(new Model(new VASTData(new File("source.csv")), new VASTDateFormatter(), WINDOWLENGTH)).setVisible(true);
     }
 }

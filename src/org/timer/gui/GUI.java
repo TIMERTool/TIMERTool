@@ -5,46 +5,42 @@
 package org.timer.gui;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import org.timer.gui.graph.GraphPanel;
-import org.timer.gui.multislider.link.LinkPanelBottom;
-import org.timer.gui.multislider.link.LinkPanelTop;
-import org.timer.gui.multislider.time.TimePanel;
-import org.timer.gui.multislider.time.TransparentPanel;
-import org.timer.model.TimeManager;
+import org.timer.model.Model;
 
 /**
  *
  * @author Peter Hoek
  */
-public class Window extends JFrame {
+public class GUI extends JFrame {
 
     public static final int WINDOWLENGTH = 1010;
     public static final String[] columns = {"Node", "Top?", "Bottom?"};
-    private final TimeManager manager;
-    private LinkPanelTop linkPanelTop;
-    private JScrollPane linksTop;
-    private LinkPanelBottom linkPanelBottom;
-    private JScrollPane linksBottom;
+    private final Model model;
+    private EdgeTopPanel edgeTopPanel;
+    private JScrollPane edgesTop;
+    private EdgeBottomPanel edgeBottomPanel;
+    private JScrollPane edgesBottom;
     private TimePanel timePanel;
     private JScrollPane times;
-    private TransparentPanel tp;
+    private TransparentPanel transparentPanel;
+    private JLabel graphPanelEdgeScalingFactorBarLabel;
+    private JSlider graphPanelEdgeScalingFactorBar;
+    private JLabel durationScalingFactorBarLabel;
     private JSlider durationScalingFactorBar;
-    private JSlider timePanelScalingFactorBar;
     private JButton selectAllTop;
     private JButton deselectAllTop;
     private JTable visiblePanel;
-    private DefaultTableModel dtm;
+    private DefaultTableModel tableModel;
     private JScrollPane visibleChooser;
     private GraphPanel graphPanel;
     private JLabel select;
@@ -52,102 +48,102 @@ public class Window extends JFrame {
     private JButton selectAllBottom;
     private JButton deselectAllBottom;
 
-    public Window(TimeManager manager) {
+    public GUI(Model model) {
         super();
-        this.manager = manager;
+        this.model = model;
 
         initComponents();
     }
 
-    private void initComponents() {        
+    private void initComponents() {
         setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         JLayeredPane jp = new JLayeredPane();
 
-        linkPanelTop = new LinkPanelTop(manager);
-        linkPanelTop.setPreferredSize(new Dimension(manager.getTopLinkPanelTotalLength(), 300));
+        edgeTopPanel = new EdgeTopPanel(model);
+        edgeTopPanel.setPreferredSize(new Dimension(model.getTopLinkPanelTotalLength(), 300));
 
-        linkPanelBottom = new LinkPanelBottom(manager);
-        linkPanelBottom.setPreferredSize(new Dimension(manager.getBottomLinkPanelTotalLength(), 300));
+        edgeBottomPanel = new EdgeBottomPanel(model);
+        edgeBottomPanel.setPreferredSize(new Dimension(model.getBottomLinkPanelTotalLength(), 300));
 
-        graphPanel = new GraphPanel(manager);
-        graphPanel.setBounds(350, 0, 1000, 450);
-        graphPanel.update(manager.getVisibleTimeLinksIterator());
-        
-        timePanel = new TimePanel(manager, linkPanelTop, linkPanelBottom, graphPanel);
-        timePanel.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 100 + 400));
+        graphPanel = new GraphPanel(model, WINDOWLENGTH, 475);
+        graphPanel.setBounds(220, 0, WINDOWLENGTH, 450);
+        graphPanel.update(model.getVisibleTimeLinksIterator());
 
-        linksTop = new JScrollPane(linkPanelTop);
-        linksTop.setBounds(350, 400, 1000, 250);
-        linksTop.setBorder(BorderFactory.createEmptyBorder());
-        linksTop.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
-        linksTop.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
+        timePanel = new TimePanel(model, edgeTopPanel, edgeBottomPanel, graphPanel);
+        timePanel.setPreferredSize(new Dimension(model.getTimePanelTotalLength(), 100 + 400));
 
-        linksBottom = new JScrollPane(linkPanelBottom);
-        linksBottom.setBounds(350, 750, 1000, 190);
-        linksBottom.setBorder(BorderFactory.createEmptyBorder());
-        linksBottom.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
-        linksBottom.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
-        
+        edgesTop = new JScrollPane(edgeTopPanel);
+        edgesTop.setBounds(220, 451, WINDOWLENGTH - 10, 200);
+        edgesTop.setBorder(BorderFactory.createEmptyBorder());
+        edgesTop.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+        edgesTop.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
+
+        edgesBottom = new JScrollPane(edgeBottomPanel);
+        edgesBottom.setBounds(220, 750, WINDOWLENGTH - 10, 198);
+        edgesBottom.setBorder(BorderFactory.createEmptyBorder());
+        edgesBottom.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+        edgesBottom.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
+
         times = new JScrollPane(timePanel);
-        times.setBounds(345, 650, 1010, 100 + 400);
+        times.setBounds(215, 650, WINDOWLENGTH, 100 + 400);
         times.setBorder(BorderFactory.createEmptyBorder());
         times.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
         times.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
 
-        tp = new TransparentPanel(manager);
-        tp.setBounds(345, 650, 1010, 100);
-        tp.setOpaque(false);
+        transparentPanel = new TransparentPanel(model);
+        transparentPanel.setBounds(215, 650, WINDOWLENGTH, 100);
+        transparentPanel.setOpaque(false);
+
+        graphPanelEdgeScalingFactorBarLabel = new JLabel("Graph Edge Stroke Threshold:");
+        graphPanelEdgeScalingFactorBarLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        graphPanelEdgeScalingFactorBarLabel.setBounds(5, 550, 200, 50);
+
+        graphPanelEdgeScalingFactorBar = new JSlider();
+        graphPanelEdgeScalingFactorBar.setMinimum(1);
+        graphPanelEdgeScalingFactorBar.setMaximum(10);
+        graphPanelEdgeScalingFactorBar.setValue(1);
+        graphPanelEdgeScalingFactorBar.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                model.setGraphPanelEdgeScalingFactor(graphPanelEdgeScalingFactorBar.getValue());
+
+                graphPanel.update(model.getVisibleTimeLinksIterator());
+            }
+        });
+        graphPanelEdgeScalingFactorBar.setBounds(5, 570, 200, 50);
+
+        durationScalingFactorBarLabel = new JLabel("Duration Scaling Factor:");
+        durationScalingFactorBarLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        durationScalingFactorBarLabel.setBounds(5, 590, 200, 50);
 
         durationScalingFactorBar = new JSlider();
         durationScalingFactorBar.setMinimum(1);
-        durationScalingFactorBar.setMaximum(100);
-        durationScalingFactorBar.setValue(durationScalingFactorBar.getMaximum());
+        durationScalingFactorBar.setMaximum(10);
+        durationScalingFactorBar.setValue(1);
         durationScalingFactorBar.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
                 int val = durationScalingFactorBar.getValue();
 
-                if (val == durationScalingFactorBar.getMaximum()) {
+                if (val == 1) {
                     val = 0;
-                } else {
-                    val = durationScalingFactorBar.getValue();
                 }
 
-                manager.setDurationScalingFactor(val);
+                model.setDurationScalingFactor(val);
 
                 timePanel.repaint();
             }
         });
-        durationScalingFactorBar.setBounds(5, 700, 200, 50);
+        durationScalingFactorBar.setBounds(5, 610, 200, 50);
 
-        timePanelScalingFactorBar = new JSlider();
-        timePanelScalingFactorBar.setMinimum(1);
-        timePanelScalingFactorBar.setMaximum(1000);
-        timePanelScalingFactorBar.setValue(1);
-        timePanelScalingFactorBar.addChangeListener(new ChangeListener() {
+        tableModel = new DefaultTableModel();
+        tableModel.setDataVector(model.getNodeLookup(), columns);
 
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                manager.setTimePanelScalingFactor(Math.pow((double) timePanelScalingFactorBar.getValue() / 75D, 2) + 1);
-
-                timePanel.setPreferredSize(new Dimension(manager.getTimePanelTotalLength(), 100));
-                times.getViewport().setViewPosition(new Point(manager.getTimePanelTotalLength(), 100));
-
-                timePanel.scrollBy(0);
-
-                timePanel.repaint();
-                graphPanel.update(manager.getVisibleTimeLinksIterator());
-            }
-        });
-        timePanelScalingFactorBar.setBounds(5, 600, 200, 50);
-
-        dtm = new DefaultTableModel();
-        dtm.setDataVector(manager.getNodeLookup(), columns);
-
-        dtm.addTableModelListener(new TableModelListener() {
+        tableModel.addTableModelListener(new TableModelListener() {
 
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -155,13 +151,13 @@ public class Window extends JFrame {
                     return;
                 }
 
-                manager.getNodeLookup()[e.getFirstRow()][e.getColumn()] = dtm.getValueAt(e.getFirstRow(), e.getColumn());
+                model.getNodeLookup()[e.getFirstRow()][e.getColumn()] = tableModel.getValueAt(e.getFirstRow(), e.getColumn());
                 timePanel.repaint();
-                graphPanel.update(manager.getVisibleTimeLinksIterator());
+                graphPanel.update(model.getVisibleTimeLinksIterator());
             }
         });
 
-        visiblePanel = new JTable(dtm);
+        visiblePanel = new JTable(tableModel);
 
         visiblePanel.getColumnModel().getColumn(1).setCellRenderer(visiblePanel.getDefaultRenderer(Boolean.class));
         visiblePanel.getColumnModel().getColumn(1).setCellEditor(visiblePanel.getDefaultEditor(Boolean.class));
@@ -185,8 +181,8 @@ public class Window extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < manager.getNodeLookup().length; i++) {
-                    manager.getNodeLookup()[i][1] = true;
+                for (int i = 0; i < model.getNodeLookup().length; i++) {
+                    model.getNodeLookup()[i][1] = true;
                 }
 
                 reloadVisibleTable();
@@ -200,8 +196,8 @@ public class Window extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < manager.getNodeLookup().length; i++) {
-                    manager.getNodeLookup()[i][2] = true;
+                for (int i = 0; i < model.getNodeLookup().length; i++) {
+                    model.getNodeLookup()[i][2] = true;
                 }
 
                 reloadVisibleTable();
@@ -215,8 +211,8 @@ public class Window extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < manager.getNodeLookup().length; i++) {
-                    manager.getNodeLookup()[i][1] = false;
+                for (int i = 0; i < model.getNodeLookup().length; i++) {
+                    model.getNodeLookup()[i][1] = false;
                 }
 
                 reloadVisibleTable();
@@ -230,8 +226,8 @@ public class Window extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < manager.getNodeLookup().length; i++) {
-                    manager.getNodeLookup()[i][2] = false;
+                for (int i = 0; i < model.getNodeLookup().length; i++) {
+                    model.getNodeLookup()[i][2] = false;
                 }
 
                 reloadVisibleTable();
@@ -240,11 +236,13 @@ public class Window extends JFrame {
 
         jp.add(graphPanel, new Integer(0));
         jp.add(times, new Integer(1));
-        jp.add(linksTop, new Integer(2));
-        jp.add(linksBottom, new Integer(2));
-        jp.add(tp, new Integer(3));
+        jp.add(edgesTop, new Integer(2));
+        jp.add(edgesBottom, new Integer(2));
+        jp.add(transparentPanel, new Integer(3));
+        jp.add(graphPanelEdgeScalingFactorBarLabel, new Integer(4));
+        jp.add(graphPanelEdgeScalingFactorBar, new Integer(4));
+        jp.add(durationScalingFactorBarLabel, new Integer(4));
         jp.add(durationScalingFactorBar, new Integer(4));
-        jp.add(timePanelScalingFactorBar, new Integer(4));
         jp.add(visibleChooser, new Integer(4));
         jp.add(select, new Integer(4));
         jp.add(deselect, new Integer(4));
@@ -257,7 +255,7 @@ public class Window extends JFrame {
     }
 
     public void reloadVisibleTable() {
-        dtm.setDataVector(manager.getNodeLookup(), columns);
+        tableModel.setDataVector(model.getNodeLookup(), columns);
 
         visiblePanel.getColumnModel().getColumn(1).setCellRenderer(visiblePanel.getDefaultRenderer(Boolean.class));
         visiblePanel.getColumnModel().getColumn(1).setCellEditor(visiblePanel.getDefaultEditor(Boolean.class));

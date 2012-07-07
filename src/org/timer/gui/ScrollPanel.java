@@ -22,7 +22,7 @@ public class ScrollPanel extends JPanel {
 
     public ScrollPanel() {
         super();
-        
+
         MouseInputAdapter mia = new MouseInputAdapter() {
 
             @Override
@@ -45,11 +45,11 @@ public class ScrollPanel extends JPanel {
                         xDiff = e.getX();
                     }
 
+                    jv.setViewPosition(new Point(visibleStart, 0));
+
                     didScroll(visibleStart - oldVisibleStart);
 
                     repaint();
-
-                    jv.setViewPosition(new Point(visibleStart, 0));
                 }
             }
 
@@ -73,13 +73,19 @@ public class ScrollPanel extends JPanel {
         if (getParent() instanceof JViewport) {
             JViewport jv = (JViewport) getParent();
 
+            visibleStart += amount;
+
+            if (visibleStart < 0) {
+                visibleStart = 0;
+            } else if (visibleStart > getWidth()) {
+                visibleStart = getWidth();
+            }
+
+            jv.setViewPosition(new Point(visibleStart, 0));
+
             didScroll(amount);
 
             repaint();
-
-            visibleStart += amount;
-
-            jv.setViewPosition(new Point(visibleStart, 0));
         }
     }
 
