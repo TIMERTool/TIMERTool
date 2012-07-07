@@ -121,15 +121,15 @@ public class GUI extends JFrame {
 
         durationScalingFactorBar = new JSlider();
         durationScalingFactorBar.setMinimum(1);
-        durationScalingFactorBar.setMaximum(10);
+        durationScalingFactorBar.setMaximum(1000);
         durationScalingFactorBar.setValue(1);
         durationScalingFactorBar.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                int val = durationScalingFactorBar.getValue();
+                double val = Math.pow(((double) durationScalingFactorBar.getValue() / 75D), 2);
 
-                if (val == 1) {
+                if (durationScalingFactorBar.getValue() == 1) {
                     val = 0;
                 }
 

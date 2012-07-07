@@ -134,7 +134,7 @@ public class TimePanel extends ScrollPanel {
             TimeEdge upTo = it.next();
             int pixel = model.linkTimeToPixel(upTo.getTime());
 
-            int thickness = model.getDurationScalingFactor() > 0 ? upTo.getDuration() / 50 * model.getDurationScalingFactor() : 1;
+            int thickness = model.getDurationScalingFactor() > 0 ? (int) (upTo.getDuration() / 50 * model.getDurationScalingFactor()) : 1;
 
             if (thickness < 1) {
                 thickness = 1;

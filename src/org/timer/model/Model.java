@@ -19,9 +19,9 @@ public final class Model {
     private final AbstractDate minTime, maxTime;
     private final AbstractData data;
     private final AbstractDateFormatter dateFormatter;
-    private int graphPanelEdgeScalingFactor = 1, timePanelSideOffset, timeWindowVisibleStart, timePanelDurationScalingFactor = 0;
+    private int graphPanelEdgeScalingFactor = 1, timePanelSideOffset, timeWindowVisibleStart;
     private Object[][] nodeLookup;
-    private double timePanelScalingFactor = 1;
+    private double timePanelScalingFactor = 1, timePanelDurationScalingFactor = 0;
     private TimeEdge start, end;
 
     public Model(AbstractData data, AbstractDateFormatter dateFormatter, int windowLength) throws IOException {
@@ -123,7 +123,7 @@ public final class Model {
         return timeWindowLength - getTimeWindowStart();
     }
 
-    public int getDurationScalingFactor() {
+    public double getDurationScalingFactor() {
         return timePanelDurationScalingFactor;
     }
 
@@ -171,7 +171,7 @@ public final class Model {
         this.timePanelScalingFactor = timePanelScalingFactor;
     }
 
-    public void setDurationScalingFactor(int durationScalingFactor) {
+    public void setDurationScalingFactor(double durationScalingFactor) {
         this.timePanelDurationScalingFactor = durationScalingFactor;
     }
 
@@ -182,7 +182,7 @@ public final class Model {
     }
 
     public final void setUpWindow() {
-        int thickness = getDurationScalingFactor() > 0 ? Math.max(data.getFirst().getDuration(), data.getLast().getDuration()) / 50 * getDurationScalingFactor() : 1;
+        int thickness = getDurationScalingFactor() > 0 ? (int) (Math.max(data.getFirst().getDuration(), data.getLast().getDuration()) / 50 * getDurationScalingFactor()) : 1;
 
         if (thickness < 1) {
             thickness = 1;
