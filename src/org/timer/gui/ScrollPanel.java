@@ -4,7 +4,6 @@
  */
 package org.timer.gui;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -23,9 +22,7 @@ public class ScrollPanel extends JPanel {
 
     public ScrollPanel() {
         super();
-       
         
-      
         MouseInputAdapter mia = new MouseInputAdapter() {
 
             @Override

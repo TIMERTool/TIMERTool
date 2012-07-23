@@ -32,8 +32,6 @@ public class Main {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    UIManager.getLookAndFeelDefaults().put("Panel.background", new Color (93,98,107));
-
 
                     break;
                 }
@@ -43,6 +41,8 @@ public class Main {
         }
         //</editor-fold>
 
+        UIManager.getLookAndFeelDefaults().put("Panel.background", new Color (93,98,107));
+        
         new GUI(new Model(new VASTData(new File("source.csv")), new VASTDateFormatter(), WINDOWLENGTH)).setVisible(true);
     }
 }
