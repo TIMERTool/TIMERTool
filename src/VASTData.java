@@ -22,7 +22,7 @@ import org.timer.model.CalendarDate;
 public class VASTData extends AbstractData {
 
     public VASTData(File input) {
-        super(new NodeColorDefinition(new Color[]{Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.BLACK}));
+        super(new NodeColorDefinition(new Color[]{Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.BLACK, Color.WHITE}));
 
         BufferedReader br = null;
         try {

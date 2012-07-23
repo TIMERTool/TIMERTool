@@ -4,6 +4,7 @@
  */
 package org.timer.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,6 +54,7 @@ public class GUI extends JFrame {
         this.model = model;
 
         initComponents();
+        
     }
 
     private void initComponents() {
@@ -60,6 +62,7 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         JLayeredPane jp = new JLayeredPane();
+      
 
         edgeTopPanel = new EdgeTopPanel(model);
         edgeTopPanel.setPreferredSize(new Dimension(model.getTopLinkPanelTotalLength(), 300));
@@ -91,6 +94,8 @@ public class GUI extends JFrame {
         times.setBorder(BorderFactory.createEmptyBorder());
         times.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
         times.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
+        times.getViewport().setBackground(new Color (93,98,107));
+        
 
         transparentPanel = new TransparentPanel(model);
         transparentPanel.setBounds(215, 650, WINDOWLENGTH, 100);
@@ -252,6 +257,8 @@ public class GUI extends JFrame {
         jp.add(deselectAllBottom, new Integer(4));
 
         add(jp);
+       
+        
     }
 
     public void reloadVisibleTable() {

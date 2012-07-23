@@ -19,6 +19,7 @@ import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import org.apache.commons.collections15.Transformer;
 import org.timer.model.Model;
@@ -42,6 +43,8 @@ public class GraphPanel extends JPanel {
         this.model = model;
 
         initComponents(prefferedWidth, prefferedHeight);
+       // this.setBorder(BorderFactory.createLineBorder(Color.white));
+     
     }
 
     private void initComponents(int prefferedWidth, int prefferedHeight) {

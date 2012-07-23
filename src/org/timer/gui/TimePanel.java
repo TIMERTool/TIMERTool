@@ -32,13 +32,15 @@ public class TimePanel extends ScrollPanel {
 
     public TimePanel(final Model model, EdgeTopPanel linkPanelTop, EdgeBottomPanel linkPanelBottom, final GraphPanel graphPanel) {
         super();
-
+      
+        
         this.model = model;
         this.edgeTopPanel = linkPanelTop;
         this.edgeBottomPanel = linkPanelBottom;
         this.graphPanel = graphPanel;
 
-        setOpaque(false);
+       setOpaque(false);
+       
 
         add(toolTip);
         toolTip.setVisible(false);

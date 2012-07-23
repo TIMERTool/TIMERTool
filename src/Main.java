@@ -3,8 +3,10 @@
  * All rights reserved.
  */
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.UIManager;
 import org.timer.gui.GUI;
 import org.timer.model.Model;
 
@@ -30,6 +32,9 @@ public class Main {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.getLookAndFeelDefaults().put("Panel.background", new Color (93,98,107));
+
+
                     break;
                 }
             }
