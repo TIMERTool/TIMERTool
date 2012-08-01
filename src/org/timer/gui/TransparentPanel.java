@@ -27,7 +27,7 @@ public class TransparentPanel extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
 
-        g.setColor(new Color(93, 98, 107, 220));
+        g.setColor(new Color(93, 98, 107, 190));
         g.fillRect(0, 0, model.getTimeWindowStart() + 5, 100);
         g.fillRect(model.getTimeWindowEnd() + 1 + 5, 0, model.getTimeWindowLength() + model.getTimeWindowEnd() + 5, 100);
 

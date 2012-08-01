@@ -30,7 +30,13 @@ public class VASTData extends AbstractData {
         Color.CYAN,
         Color.MAGENTA,
         Color.BLACK,
-        Color.WHITE
+        Color.WHITE,
+        new Color (0,50,50),
+        new Color (50,0,50),
+        new Color (0,100,0),
+        new Color (50,50,0),
+        new Color (50,0,0)
+           
     };
 
     public VASTData(File input) {
